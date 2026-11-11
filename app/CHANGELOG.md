@@ -7,6 +7,15 @@ Every release is a single entry here. The version in this file, the version in
 Semantic versioning: `MAJOR` breaks an existing workflow, `MINOR` adds a
 capability, `PATCH` fixes behaviour without changing the interface.
 
+## [0.7.13] - 2026-11-11
+
+### Added
+
+- **My GitHub repositories in Discover.** After signing in, browse up to 100
+  public repositories owned by your account and add any of them to the local
+  library through the existing review-and-install flow. Private repositories
+  are not requested or accessed.
+
 ## [0.7.12] - 2026-11-10
 
 ### Fixed

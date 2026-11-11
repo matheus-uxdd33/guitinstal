@@ -1,7 +1,7 @@
 {
-  "version": "0.7.12",
+  "version": "0.7.13",
   "releasedAt": "2026-11-11",
-  "releaseNotes": "Fixed the project Folder and Terminal actions on Windows and added clear success and failure feedback.",
+  "releaseNotes": "Added My GitHub public repository discovery and corrected platform/security guidance. This release has Windows installers; Linux and macOS native packages remain pending.",
   "installGuide": "download.html",
   "links": {
     "github": "https://github.com/matheus-uxdd33/guitinstal",
@@ -17,22 +17,22 @@
       "files": [
         {
           "kind": "setup",
-          "name": "GUITinstal-0.7.12-Setup-x64.exe",
-          "url": "https://github.com/matheus-uxdd33/guitinstal/releases/download/v0.7.12/GUITinstal-0.7.12-Setup-x64.exe",
-          "size": 121852892,
+          "name": "GUITinstal-0.7.13-Setup-x64.exe",
+          "url": "https://github.com/matheus-uxdd33/guitinstal/releases/download/v0.7.13/GUITinstal-0.7.13-Setup-x64.exe",
+          "size": 121853583,
           "sizeLabel": "116.2 MB",
-          "sha256": "6a6452f1be2efe6fedb1f2feae13549bf21a6a47264457a432c602a29c26d9c2",
-          "builtAt": "2026-11-11T03:07:17.177Z",
+          "sha256": "f5324382c4c04ec65b6be8f6aac39d59d52ee3f6422847a9fadcdd98a4517dbc",
+          "builtAt": "2026-11-11T14:09:19.186Z",
           "recommended": true
         },
         {
           "kind": "portable",
-          "name": "GUITinstal-0.7.12-Portable-x64.exe",
-          "url": "https://github.com/matheus-uxdd33/guitinstal/releases/download/v0.7.12/GUITinstal-0.7.12-Portable-x64.exe",
-          "size": 110623373,
+          "name": "GUITinstal-0.7.13-Portable-x64.exe",
+          "url": "https://github.com/matheus-uxdd33/guitinstal/releases/download/v0.7.13/GUITinstal-0.7.13-Portable-x64.exe",
+          "size": 110621708,
           "sizeLabel": "105.5 MB",
-          "sha256": "3cf5aeea3f124cccc679e0a1939b4996cc888df317ffb926b0dd3957fcfff838",
-          "builtAt": "2026-11-11T03:09:59.706Z",
+          "sha256": "732a9028d283d9eaf7d35335a21035087fa8c16c3bd287a1a04a687dc4d26073",
+          "builtAt": "2026-11-11T14:11:37.827Z",
           "recommended": false
         }
       ]

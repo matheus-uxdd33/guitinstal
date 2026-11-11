@@ -91,6 +91,21 @@ function fail (message) {
   process.exit(1)
 }
 
+function changedFiles () {
+  const result = spawnSync('git', ['status', '--short', '--untracked-files=all'], {
+    cwd: repoDir,
+    encoding: 'utf8',
+  })
+  if (result.status !== 0) return 'unavailable'
+  const reportPath = `Reports/RELEASE-v${pkg.version}.md`
+  const files = String(result.stdout || '')
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .map((line) => line.slice(3).replace(/\\/g, '/'))
+    .filter((file) => file !== reportPath)
+  return files.length ? files.join(', ') : 'none'
+}
+
 const pkg = readJson(path.join(appDir, 'package.json'))
 const version = pkg.version
 if (!/^\d+\.\d+\.\d+$/.test(version)) fail(`package.json version "${version}" is not semver`)
@@ -197,7 +212,7 @@ const report = [
   `- Notes: ${notes}`,
   `- Prepared by: npm run release (tools/release.js)`,
   `- Products: ${process.platform} ${process.arch}, Node ${process.version}`,
-  `- Files changed: ${flag('files') || 'not tracked (this workspace is not a git repository)'}`,
+  `- Files changed: ${flag('files') || changedFiles()}`,
   '',
   '## Assets',
   '',

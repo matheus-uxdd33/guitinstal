@@ -69,7 +69,7 @@ O núcleo (`core/`) não sabe nada sobre HTTP nem sobre o navegador: é por isso
 
 ## Configurações
 
-Em *Configurações*: pasta de trabalho, conexão opcional com GitHub (aumenta o limite da API de 60 para 5000 requisições/hora), clone raso, aprovação automática de passos de baixo risco e tema. A conexão usa o Device Flow oficial e solicita somente acesso público; não concede acesso a repositórios privados.
+Em *Configurações*: pasta de trabalho, conexão opcional com GitHub (aumenta o limite da API de 60 para 5000 requisições/hora), clone raso, aprovação automática de passos de baixo risco e tema. A conexão usa o Device Flow oficial e não pede acesso a repositórios privados. Depois de conectar, a aba *My GitHub* em Discover mostra até 100 repositórios públicos da conta, ordenados por atualização.
 
 Em uma instalação nova, a pasta de trabalho padrão é `Desktop\Repositories` (ou `~/GUITinstal-workspace` quando não existe pasta Desktop). A galeria sempre varre a raiz configurada e, se existir, a pasta legada `.guitinstal-workspace` dentro dela: assim os clones feitos por versões antigas continuam visíveis mesmo depois de mudar a pasta de trabalho.
 

@@ -32,8 +32,9 @@ node app/tools/serve-site.js 4173  # preview the website
 > recorded per project so you can retry a failed step instead of starting over.
 >
 > The projects and their library stay on your machine. There is no telemetry or
-> GUITinstal cloud service. GitHub sign-in is optional and only raises the public
-> API limit; it does not request access to private repositories. GUITinstal talks
+> GUITinstal cloud service. GitHub sign-in is optional, raises the public API
+> limit and adds a view of your public repositories; it does not request access
+> to private repositories. GUITinstal talks
 > to GitHub over HTTPS, writes its plan, and shells out to
 > the toolchains you already have. The local server binds to `127.0.0.1` only, on a
 > random port, and every request needs a per-session token, so nothing else on your

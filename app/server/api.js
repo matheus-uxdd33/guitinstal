@@ -24,7 +24,17 @@ const {
 const { defaultWorkspace, userDataDir } = require('../core/paths');
 const changelog = require('../core/changelog');
 const { explain } = require('../core/assistant');
-const { browseRepos, fetchCommits, fetchFile, fetchRepo, fetchTree, fetchViewer, randomRepos, searchRepos } = require('../core/github');
+const {
+  browseRepos,
+  fetchCommits,
+  fetchFile,
+  fetchRepo,
+  fetchTree,
+  fetchUserRepos,
+  fetchViewer,
+  randomRepos,
+  searchRepos,
+} = require('../core/github');
 const githubAuth = require('../core/github-auth');
 const { detectStack, MANIFESTS } = require('../core/detect');
 const { buildPlan, runtimePlan, stackForLanguage } = require('../core/plan');
@@ -971,7 +981,9 @@ const routes = [
     handler: async (req) => {
       const body = await readJsonBody(req);
       const settings = getSettings();
-      const mode = ['trending', 'recent', 'popular', 'favorites', 'random', 'search'].includes(body.mode) ? body.mode : 'search';
+      const mode = ['trending', 'recent', 'popular', 'favorites', 'mine', 'random', 'search'].includes(body.mode)
+        ? body.mode
+        : 'search';
       const language = String(body.language || '').replace(/[^A-Za-z0-9.#+-]/g, '').slice(0, 30);
       const query = String(body.q || '').trim().slice(0, 120);
 
@@ -999,6 +1011,30 @@ const routes = [
           )
         );
         return { total: items.length, items, mode, label: 'Favorites', trending: false };
+      }
+
+      if (mode === 'mine') {
+        if (!settings.githubToken) {
+          return {
+            total: 0,
+            items: [],
+            mode,
+            label: 'My public repositories',
+            note: 'Sign in with GitHub in Settings to browse your public repositories. GUITinstal does not request access to private repositories.',
+            trending: false,
+          };
+        }
+        const account = settings.githubUser || (await fetchViewer(settings.githubToken)).login;
+        const page = await fetchUserRepos(account);
+        const saved = listFavorites();
+        return {
+          ...page,
+          items: page.items.map((item) => withDiscoverFlags(item, saved)),
+          mode,
+          label: 'My public repositories',
+          note: 'Showing up to 100 public repositories owned by your GitHub account, most recently updated first. Private repositories are not accessed.',
+          trending: false,
+        };
       }
 
       let page;

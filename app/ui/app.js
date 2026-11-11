@@ -1264,7 +1264,7 @@
     requestId: 0,
   };
 
-  const DISCOVER_MODES = ['trending', 'recent', 'random', 'favorites', 'search'];
+  const DISCOVER_MODES = ['trending', 'recent', 'random', 'favorites', 'mine', 'search'];
 
   function repoOwner(name) {
     const slash = String(name || '').indexOf('/');
@@ -1355,7 +1355,7 @@
     lang.disabled = !applies;
     lang.title = applies
       ? 'Only show repositories written in this language'
-      : 'Not used while browsing Favorites or your own search terms';
+      : 'Not used while browsing Favorites, your repositories, or your own search terms';
   }
 
   function renderDiscover(data) {
@@ -1374,10 +1374,23 @@
     note.hidden = !data.note;
 
     if (!items.length) {
-      grid.innerHTML =
-        discovery.mode === 'favorites'
-          ? discoverEmpty('No favorites yet', 'Tap the star on any card to keep it here. Favorites live in the local library and survive a restart.')
-          : discoverEmpty('Nothing found', 'Try another term. Search goes straight to the public GitHub API.');
+      let empty;
+      if (discovery.mode === 'favorites') {
+        empty = discoverEmpty(
+          'No favorites yet',
+          'Tap the star on any card to keep it here. Favorites live in the local library and survive a restart.'
+        );
+      } else if (discovery.mode === 'mine' && !state.settings?.githubTokenSet) {
+        empty = discoverEmpty(
+          'Connect GitHub',
+          'Sign in from Settings to browse your public repositories here. Private repositories are not requested or accessed.'
+        );
+      } else if (discovery.mode === 'mine') {
+        empty = discoverEmpty('No public repositories found', 'This GitHub account does not have any public repositories to show.');
+      } else {
+        empty = discoverEmpty('Nothing found', 'Try another term. Search goes straight to the public GitHub API.');
+      }
+      grid.innerHTML = empty;
       return;
     }
     grid.innerHTML = items.map(discoverCardMarkup).join('');
@@ -1901,6 +1914,7 @@
         // Pull the username + avatar from GitHub so the Settings row shows who
         // actually signed in instead of a bare "signed in" flag.
         await checkGithubAccount();
+        if (discovery.mode === 'mine') await loadDiscover('mine');
       } else if (result.status === 'expired') {
         closeDevice();
         toast('Code expired', 'Device codes last 15 minutes. Start the sign-in again.', 'error');
@@ -1960,6 +1974,7 @@
       renderGithubAccount(result.settings, result.token);
       await loadState();
       toast('Signed out', 'The token was removed from this computer. Revoke it at github.com/settings/tokens too.', 'info');
+      if (discovery.mode === 'mine') await loadDiscover('mine');
     } catch (error) {
       toast('Could not sign out', error.message, 'error');
     } finally {
@@ -1971,12 +1986,17 @@
     const value = $('#tokenInput').value.trim();
     saveSettings({ githubToken: value }, value ? 'Token saved on this computer.' : 'Token removed.');
     $('#tokenInput').value = '';
-    if (value) checkGithubAccount({ quiet: true });
+    if (value) {
+      checkGithubAccount({ quiet: true }).then(() => {
+        if (discovery.mode === 'mine') loadDiscover('mine');
+      });
+    }
   });
 
   $('#clearToken').addEventListener('click', () => {
     $('#tokenInput').value = '';
     saveSettings({ githubToken: '' }, 'Token removed.');
+    if (discovery.mode === 'mine') loadDiscover('mine');
   });
 
   $('#shallowToggle').addEventListener('change', (event) => {

@@ -219,6 +219,43 @@ async function fetchViewer(token) {
   };
 }
 
+/** Public repositories owned by the signed-in user, fetched without credentials. */
+async function fetchUserRepos(login) {
+  const username = String(login || '').trim();
+  if (!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(username)) {
+    throw new Error('The saved GitHub account name is invalid. Check the account in Settings.');
+  }
+  const params = new URLSearchParams({
+    type: 'owner',
+    sort: 'updated',
+    direction: 'desc',
+    per_page: '100',
+    page: '1',
+  });
+  const url = `${API}/users/${encodeURIComponent(username)}/repos?${params}`;
+  return cachedJson(url, CACHE_TTL.repo, async () => {
+    const data = await (await request(url, '')).json();
+    const items = (Array.isArray(data) ? data : [])
+      .filter((item) => item.private !== true)
+      .map((item) => ({
+        owner: item.owner?.login || username,
+        name: item.name || '',
+        fullName: item.full_name || `${username}/${item.name || ''}`,
+        description: item.description || '',
+        url: item.html_url || `https://github.com/${username}/${item.name || ''}`,
+        stars: item.stargazers_count ?? 0,
+        forks: item.forks_count ?? 0,
+        ownerAvatar: item.owner?.avatar_url || '',
+        pushedAt: item.pushed_at || '',
+        language: item.language || '',
+        license: item.license?.spdx_id || '',
+        updatedAt: item.updated_at || '',
+        topics: Array.isArray(item.topics) ? item.topics.slice(0, 5) : [],
+      }));
+    return { total: items.length, items };
+  });
+}
+
 /** Repository search used by the Discover screen. */
 async function searchRepos(query, token, { sort = 'stars', page = 1 } = {}) {
   const params = new URLSearchParams({
@@ -321,6 +358,7 @@ module.exports = {
   fetchFile,
   fetchRepo,
   fetchTree,
+  fetchUserRepos,
   fetchViewer,
   randomRepos,
   searchRepos,
