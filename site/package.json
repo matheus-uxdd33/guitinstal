@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "name": "guitinstal-site",
+  "version": "1.0.0",
+  "dependencies": {
+    "@vercel/blob": "^2.4.0"
+  }
+}

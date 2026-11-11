@@ -1,0 +1,2243 @@
+{
+  "engine": {
+    "name": "GUITinstal Universal Engine",
+    "specVersion": "1.0",
+    "appVersion": "0.7.11",
+    "language": "en",
+    "promise": "Paste a repository. Analyze it. Install it. Launch it.",
+    "cycle": [
+      "discover",
+      "analyze",
+      "prepare",
+      "install",
+      "verify",
+      "run",
+      "manage"
+    ],
+    "installerChain": "INSTALL -> PREPARE -> VERIFY -> RUN -> MANAGE",
+    "notes": [
+      "The catalog is data. The engine modules read it; they never hardcode a second copy of it.",
+      "installMode says how a runtime can reach a machine. status says whether GUITinstal can do it today.",
+      "A runtime is never installed from an untrusted mirror and never without a published checksum."
+    ]
+  },
+  "ecosystems": [
+    {
+      "id": "vcs",
+      "label": "Version control",
+      "runtimes": [
+        "git",
+        "gh"
+      ]
+    },
+    {
+      "id": "python",
+      "label": "Python ecosystem",
+      "runtimes": [
+        "python",
+        "pip",
+        "venv",
+        "uv",
+        "poetry",
+        "conda"
+      ]
+    },
+    {
+      "id": "javascript",
+      "label": "JavaScript ecosystem",
+      "runtimes": [
+        "node",
+        "npm",
+        "pnpm",
+        "yarn",
+        "bun"
+      ]
+    },
+    {
+      "id": "container",
+      "label": "Container ecosystem",
+      "runtimes": [
+        "docker",
+        "compose"
+      ]
+    },
+    {
+      "id": "go",
+      "label": "Go ecosystem",
+      "runtimes": [
+        "go",
+        "gomod"
+      ]
+    },
+    {
+      "id": "rust",
+      "label": "Rust ecosystem",
+      "runtimes": [
+        "rustup",
+        "cargo"
+      ]
+    },
+    {
+      "id": "java",
+      "label": "Java ecosystem",
+      "runtimes": [
+        "java",
+        "maven",
+        "gradle"
+      ]
+    },
+    {
+      "id": "php",
+      "label": "PHP ecosystem",
+      "runtimes": [
+        "php",
+        "composer"
+      ]
+    },
+    {
+      "id": "ruby",
+      "label": "Ruby ecosystem",
+      "runtimes": [
+        "ruby",
+        "bundle"
+      ]
+    },
+    {
+      "id": "dotnet",
+      "label": ".NET ecosystem",
+      "runtimes": [
+        "dotnet",
+        "nuget",
+        "msbuild"
+      ]
+    },
+    {
+      "id": "native",
+      "label": "Native development",
+      "runtimes": [
+        "gcc",
+        "clang",
+        "cmake",
+        "make",
+        "msys2"
+      ]
+    }
+  ],
+  "runtimes": [
+    {
+      "id": "git",
+      "label": "Git",
+      "ecosystem": "vcs",
+      "summary": "The version control every clone depends on.",
+      "versions": {
+        "supported": "2.56 (pinned MinGit build)",
+        "policy": "pinned release of Git for Windows, updated with a new digest and a fresh clone proof"
+      },
+      "officialSource": "https://github.com/git-for-windows/git/releases",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/git-for-windows/git/releases/download/v2.56.0.windows.4/MinGit-2.56.0.4-64-bit.zip",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": false,
+        "pinned": true,
+        "where": "Git for Windows publishes no checksum file for MinGit; GUITinstal pins the digest of the exact supported asset and records it in its install manifest"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": true,
+        "where": "the Git for Windows binaries are signed by Johannes Schindelin (checked after unpacking)"
+      },
+      "destination": "<userData>/tools/git (cmd/git.exe)",
+      "versionCommand": {
+        "command": "git",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run git --version, confirm git-remote-https is present, and clone a repository with the managed copy",
+      "uninstall": "delete <userData>/tools/git; nothing outside the tools folder is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "gh",
+      "label": "GitHub CLI",
+      "ecosystem": "vcs",
+      "summary": "Optional helper for repositories that need the gh command line.",
+      "versions": {
+        "supported": "2.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://cli.github.com/",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/cli/cli/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the release assets, next to the archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/gh",
+      "versionCommand": {
+        "command": "gh",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented",
+      "reason": "Resolver returns 200 OK with SHA-256 verification; optional helper for repositories needing gh command"
+    },
+    {
+      "id": "python",
+      "label": "Python",
+      "ecosystem": "python",
+      "summary": "The interpreter a Python project runs on, plus pip and venv.",
+      "versions": {
+        "supported": "3.9 or newer",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://www.python.org/downloads/windows/",
+      "download": {
+        "kind": "exe",
+        "url": "https://www.python.org/downloads/windows/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the download page lists a digest per file"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": true,
+        "where": "signed by the Python Software Foundation"
+      },
+      "destination": "<userData>/tools/python",
+      "versionCommand": {
+        "command": "python",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented",
+      "reason": "A per-user Python install exists, but it still needs its own installer adapter. Until it exists, GUITinstal points at the official page instead of faking a button."
+    },
+    {
+      "id": "pip",
+      "label": "pip",
+      "ecosystem": "python",
+      "summary": "The Python package installer. It arrives with Python.",
+      "versions": {
+        "supported": "bundled with the interpreter",
+        "policy": "whatever the interpreter ships"
+      },
+      "officialSource": "https://pip.pypa.io/en/stable/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the Python installation",
+      "versionCommand": {
+        "command": "pip",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "nothing to uninstall on its own",
+      "installMode": "bundled",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "python"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "venv",
+      "label": "venv",
+      "ecosystem": "python",
+      "summary": "The standard library tool that gives a project its own isolated environment.",
+      "versions": {
+        "supported": "bundled with the interpreter",
+        "policy": "whatever the interpreter ships"
+      },
+      "officialSource": "https://docs.python.org/3/library/venv.html",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the project folder",
+      "versionCommand": {
+        "command": "python",
+        "args": [
+          "-m",
+          "venv",
+          "--help"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the project .venv folder",
+      "installMode": "builtin",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "python"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "uv",
+      "label": "uv",
+      "ecosystem": "python",
+      "summary": "Fast Python package and environment manager, used when a project asks for it.",
+      "versions": {
+        "supported": "0.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://docs.astral.sh/uv/",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/astral-sh/uv/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the release assets publish a .sha256 per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/uv",
+      "versionCommand": {
+        "command": "uv",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "poetry",
+      "label": "Poetry",
+      "ecosystem": "python",
+      "summary": "Dependency manager for Python projects that ship a pyproject.toml with a poetry section.",
+      "versions": {
+        "supported": "1.x and 2.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://python-poetry.org/docs/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "pip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the package index publishes the artifact digest"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/poetry",
+      "versionCommand": {
+        "command": "poetry",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "python"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "conda",
+      "label": "Conda (Miniconda)",
+      "ecosystem": "python",
+      "summary": "Environment manager for projects that need non-Python native dependencies.",
+      "versions": {
+        "supported": "recent Miniconda",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://docs.conda.io/en/latest/miniconda.html",
+      "download": {
+        "kind": "exe",
+        "url": "https://docs.conda.io/en/latest/miniconda.html",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "partial"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the download page lists a digest per file"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/conda",
+      "versionCommand": {
+        "command": "conda",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "guided",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "external",
+      "reason": "Miniconda is a large per-user installer with its own package manager. It stays a guided install until GUITinstal can verify it end to end."
+    },
+    {
+      "id": "node",
+      "label": "Node.js",
+      "ecosystem": "javascript",
+      "summary": "The runtime a JavaScript project runs on.",
+      "versions": {
+        "supported": "18 or newer (LTS)",
+        "policy": "latest LTS published by the vendor"
+      },
+      "officialSource": "https://nodejs.org/en/download/",
+      "download": {
+        "kind": "zip",
+        "url": "https://nodejs.org/dist/index.json",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "SHASUMS256.txt next to every release"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/node",
+      "versionCommand": {
+        "command": "node",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "npm",
+      "label": "npm",
+      "ecosystem": "javascript",
+      "summary": "The JavaScript package manager. It arrives with Node.js.",
+      "versions": {
+        "supported": "bundled with Node.js",
+        "policy": "whatever Node.js ships"
+      },
+      "officialSource": "https://docs.npmjs.com/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the Node.js installation",
+      "versionCommand": {
+        "command": "npm",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "nothing to uninstall on its own",
+      "installMode": "bundled",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "node"
+      ],
+      "status": "implemented",
+      "reason": "Bundled with Node.js; resolver returns 200 OK"
+    },
+    {
+      "id": "pnpm",
+      "label": "pnpm",
+      "ecosystem": "javascript",
+      "summary": "Package manager for repositories that ship a pnpm-lock.yaml.",
+      "versions": {
+        "supported": "8.x or newer",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://pnpm.io/installation",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "npm",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the package index publishes the artifact digest"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/pnpm",
+      "versionCommand": {
+        "command": "pnpm",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "node"
+      ],
+      "status": "implemented",
+      "reason": "Resolver added in 0.7.12: npm registry lookup with SHA-256 verification; installed via Node.js npm"
+    },
+    {
+      "id": "yarn",
+      "label": "Yarn",
+      "ecosystem": "javascript",
+      "summary": "Package manager for repositories that ship a yarn.lock.",
+      "versions": {
+        "supported": "1.x and 4.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://yarnpkg.com/getting-started/install",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "npm",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the package index publishes the artifact digest"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/yarn",
+      "versionCommand": {
+        "command": "yarn",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "node"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "bun",
+      "label": "Bun",
+      "ecosystem": "javascript",
+      "summary": "Alternative JavaScript runtime, used only when a repository asks for it.",
+      "versions": {
+        "supported": "1.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://bun.sh/download",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/oven-sh/bun/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the release assets publish a digest per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/bun",
+      "versionCommand": {
+        "command": "bun",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "docker",
+      "label": "Docker Desktop",
+      "ecosystem": "container",
+      "summary": "Container runtime for repositories that ship a Dockerfile or a compose file.",
+      "versions": {
+        "supported": "recent Desktop releases",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://docs.docker.com/desktop/install/windows-install/",
+      "download": {
+        "kind": "exe",
+        "url": "https://docs.docker.com/desktop/install/windows-install/",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "partial"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the download page lists a digest per file"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": true,
+        "where": "signed by Docker Inc."
+      },
+      "destination": "system-wide installation",
+      "versionCommand": {
+        "command": "docker",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "the uninstaller shipped with Docker Desktop",
+      "installMode": "guided",
+      "requiresAdmin": true,
+      "requiresReboot": true,
+      "needs": [],
+      "status": "external",
+      "reason": "Docker Desktop needs administrator rights, WSL2 or Hyper-V, and sometimes a reboot. There is no per-user silent install, so GUITinstal shows the official guide instead of a button that cannot work."
+    },
+    {
+      "id": "compose",
+      "label": "Docker Compose",
+      "ecosystem": "container",
+      "summary": "The compose command used to start a multi-service project.",
+      "versions": {
+        "supported": "bundled with Docker Desktop",
+        "policy": "whatever Docker ships"
+      },
+      "officialSource": "https://docs.docker.com/compose/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the Docker installation",
+      "versionCommand": {
+        "command": "docker",
+        "args": [
+          "compose",
+          "version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "nothing to uninstall on its own",
+      "installMode": "bundled",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "docker"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "go",
+      "label": "Go",
+      "ecosystem": "go",
+      "summary": "The Go toolchain a Go module is built and run with.",
+      "versions": {
+        "supported": "1.21 or newer",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://go.dev/dl/",
+      "download": {
+        "kind": "zip",
+        "url": "https://go.dev/dl/?mode=json",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the download index publishes a digest per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/go",
+      "versionCommand": {
+        "command": "go",
+        "args": [
+          "version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "gomod",
+      "label": "Go Modules",
+      "ecosystem": "go",
+      "summary": "The dependency resolver that ships inside the Go toolchain.",
+      "versions": {
+        "supported": "bundled with Go",
+        "policy": "whatever Go ships"
+      },
+      "officialSource": "https://go.dev/ref/mod",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the Go installation",
+      "versionCommand": {
+        "command": "go",
+        "args": [
+          "env",
+          "GOMODCACHE"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "nothing to uninstall on its own",
+      "installMode": "builtin",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "go"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "rustup",
+      "label": "Rustup",
+      "ecosystem": "rust",
+      "summary": "The Rust toolchain installer.",
+      "versions": {
+        "supported": "current stable channel",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://rustup.rs/",
+      "download": {
+        "kind": "exe",
+        "url": "https://static.rust-lang.org/rustup/dist/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "a .sha256 file next to the installer"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "%USERPROFILE%/.cargo",
+      "versionCommand": {
+        "command": "rustup",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "rustup self uninstall",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "cargo",
+      "label": "Cargo",
+      "ecosystem": "rust",
+      "summary": "The Rust package manager and build tool. It arrives with rustup.",
+      "versions": {
+        "supported": "bundled with rustup",
+        "policy": "whatever rustup installs"
+      },
+      "officialSource": "https://doc.rust-lang.org/cargo/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "%USERPROFILE%/.cargo/bin",
+      "versionCommand": {
+        "command": "cargo",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "rustup self uninstall",
+      "installMode": "bundled",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "rustup"
+      ],
+      "status": "implemented",
+      "reason": "GUITstal's Cargo step installs rustup, which publishes a checksum for its own installer."
+    },
+    {
+      "id": "java",
+      "label": "Java (JDK)",
+      "ecosystem": "java",
+      "summary": "The JDK a Java project is compiled and run with.",
+      "versions": {
+        "supported": "17 or newer (LTS)",
+        "policy": "latest LTS published by Eclipse Adoptium"
+      },
+      "officialSource": "https://adoptium.net/temurin/releases/",
+      "download": {
+        "kind": "zip",
+        "url": "https://api.adoptium.net/v3/assets/latest/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the release API publishes a digest per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/java",
+      "versionCommand": {
+        "command": "java",
+        "args": [
+          "-version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "maven",
+      "label": "Maven",
+      "ecosystem": "java",
+      "summary": "Build and dependency manager for repositories with a pom.xml.",
+      "versions": {
+        "supported": "3.9 or newer",
+        "policy": "latest stable published by Apache"
+      },
+      "officialSource": "https://maven.apache.org/download.cgi",
+      "download": {
+        "kind": "zip",
+        "url": "https://dlcdn.apache.org/maven/maven-3/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha512",
+        "published": true,
+        "where": "a .sha512 file next to the archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/maven",
+      "versionCommand": {
+        "command": "mvn",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "java"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "gradle",
+      "label": "Gradle",
+      "ecosystem": "java",
+      "summary": "Build tool for repositories with a build.gradle file.",
+      "versions": {
+        "supported": "8.x or newer",
+        "policy": "latest stable published by Gradle"
+      },
+      "officialSource": "https://services.gradle.org/distributions/",
+      "download": {
+        "kind": "zip",
+        "url": "https://services.gradle.org/versions/current",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "a .sha256 file next to the archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/gradle",
+      "versionCommand": {
+        "command": "gradle",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "java"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "php",
+      "label": "PHP 8",
+      "ecosystem": "php",
+      "summary": "The interpreter a PHP project runs on.",
+      "versions": {
+        "supported": "8.2 - 8.5",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://windows.php.net/download/",
+      "download": {
+        "kind": "zip",
+        "url": "https://downloads.php.net/~windows/releases/archives/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the download page publishes a digest per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/php",
+      "versionCommand": {
+        "command": "php",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command, then check that the extensions the project needs are loaded",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented"
+    },
+    {
+      "id": "composer",
+      "label": "Composer",
+      "ecosystem": "php",
+      "summary": "The PHP dependency manager.",
+      "versions": {
+        "supported": "2.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://getcomposer.org/download/",
+      "download": {
+        "kind": "phar",
+        "url": "https://getcomposer.org/download/latest-stable/composer.phar",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "phar",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "composer.phar.sha256sum next to the phar"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/composer",
+      "versionCommand": {
+        "command": "composer",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command through the PHP that GUITstal installed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "php"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "ruby",
+      "label": "Ruby",
+      "ecosystem": "ruby",
+      "summary": "The interpreter a Ruby project runs on.",
+      "versions": {
+        "supported": "3.x",
+        "policy": "latest stable published by the vendor"
+      },
+      "officialSource": "https://rubyinstaller.org/downloads/",
+      "download": {
+        "kind": "exe",
+        "url": "https://rubyinstaller.org/downloads/",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": false,
+        "where": "not published for every release"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/ruby",
+      "versionCommand": {
+        "command": "ruby",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "guided",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "implemented",
+      "reason": "Resolver fixed in 0.7.11: oneclick/rubyinstaller2 with SHA-256 verification; native gem build tools optional"
+    },
+    {
+      "id": "bundle",
+      "label": "Bundler",
+      "ecosystem": "ruby",
+      "summary": "The Ruby dependency manager. It arrives with Ruby.",
+      "versions": {
+        "supported": "bundled with Ruby",
+        "policy": "whatever Ruby ships"
+      },
+      "officialSource": "https://bundler.io/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the Ruby installation",
+      "versionCommand": {
+        "command": "bundle",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "nothing to uninstall on its own",
+      "installMode": "bundled",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "ruby"
+      ],
+      "status": "catalogued"
+    },
+    {
+      "id": "dotnet",
+      "label": ".NET SDK",
+      "ecosystem": "dotnet",
+      "summary": "The SDK a .NET project is built and run with.",
+      "versions": {
+        "supported": "8.0 or newer (LTS)",
+        "policy": "latest LTS published by Microsoft"
+      },
+      "officialSource": "https://dotnet.microsoft.com/en-us/download/dotnet/8.0",
+      "download": {
+        "kind": "zip",
+        "url": "https://dot.net/v1/dotnet-install.ps1",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha512",
+        "published": true,
+        "where": "the SDK download publishes a digest per archive"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/dotnet",
+      "versionCommand": {
+        "command": "dotnet",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "catalogued"
+    },
+    {
+      "id": "nuget",
+      "label": "NuGet",
+      "ecosystem": "dotnet",
+      "summary": "The .NET package manager, needed by projects that still use packages.config.",
+      "versions": {
+        "supported": "6.x",
+        "policy": "latest stable published by Microsoft"
+      },
+      "officialSource": "https://www.nuget.org/downloads",
+      "download": {
+        "kind": "exe",
+        "url": "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "none",
+          "arm64": "none"
+        },
+        "linux": {
+          "x64": "none",
+          "arm64": "none"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha512",
+        "published": true,
+        "where": "dist.nuget.org publishes a digest per file"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": true,
+        "where": "signed by Microsoft"
+      },
+      "destination": "<userData>/tools/nuget",
+      "versionCommand": {
+        "command": "nuget",
+        "args": [
+          "help"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "catalogued"
+    },
+    {
+      "id": "msbuild",
+      "label": "MSBuild",
+      "ecosystem": "dotnet",
+      "summary": "The build engine behind the old packages.config layout and desktop .NET projects.",
+      "versions": {
+        "supported": "Visual Studio Build Tools 2022",
+        "policy": "latest build tools published by Microsoft"
+      },
+      "officialSource": "https://visualstudio.microsoft.com/downloads/",
+      "download": {
+        "kind": "exe",
+        "url": "https://visualstudio.microsoft.com/downloads/",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "none",
+          "arm64": "none"
+        },
+        "linux": {
+          "x64": "none",
+          "arm64": "none"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the Microsoft download page lists a digest per file"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": true,
+        "where": "signed by Microsoft"
+      },
+      "destination": "system-wide installation",
+      "versionCommand": {
+        "command": "msbuild",
+        "args": [
+          "-version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "the Visual Studio Installer",
+      "installMode": "guided",
+      "requiresAdmin": true,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "external",
+      "reason": "Build Tools are a multi-gigabyte installer that requires administrator rights. GUITinstal shows the official page instead of pretending it can install it silently."
+    },
+    {
+      "id": "gcc",
+      "label": "GCC",
+      "ecosystem": "native",
+      "summary": "The C and C++ compiler used by many native projects on Windows.",
+      "versions": {
+        "supported": "13 or newer",
+        "policy": "whatever MSYS2 or MinGW publishes"
+      },
+      "officialSource": "https://www.msys2.org/",
+      "download": {
+        "kind": "exe",
+        "url": "https://www.msys2.org/",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "partial",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": false,
+        "where": "not published for every release"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/msys2",
+      "versionCommand": {
+        "command": "gcc",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "guided",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "msys2"
+      ],
+      "status": "external",
+      "reason": "There is no official standalone GCC build for Windows. It only exists through a third-party toolchain, so GUITstal points at MSYS2 instead of shipping a build of unknown origin."
+    },
+    {
+      "id": "clang",
+      "label": "Clang",
+      "ecosystem": "native",
+      "summary": "The LLVM compiler, for projects that ask for it by name.",
+      "versions": {
+        "supported": "18 or newer",
+        "policy": "latest stable published by the LLVM project"
+      },
+      "officialSource": "https://releases.llvm.org/",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/llvm/llvm-project/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": false,
+        "where": "not published for every asset"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/clang",
+      "versionCommand": {
+        "command": "clang",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "guided",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "catalogued",
+      "reason": "LLVM publishes a digest for some release assets but not for all of them. A managed install needs one digest per archive, so this one stays a guided install until the release policy is confirmed."
+    },
+    {
+      "id": "cmake",
+      "label": "CMake",
+      "ecosystem": "native",
+      "summary": "The build system generator used by native and C/C++ projects.",
+      "versions": {
+        "supported": "3.20 or newer",
+        "policy": "latest stable published by Kitware"
+      },
+      "officialSource": "https://cmake.org/download/",
+      "download": {
+        "kind": "zip",
+        "url": "https://github.com/Kitware/CMake/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "partial"
+        },
+        "darwin": {
+          "x64": "full",
+          "arm64": "full"
+        },
+        "linux": {
+          "x64": "full",
+          "arm64": "full"
+        }
+      },
+      "installerFormat": "zip",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "CMake-<version>-SHA-256.txt next to the release"
+      },
+      "signature": {
+        "kind": "none",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/cmake",
+      "versionCommand": {
+        "command": "cmake",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "catalogued"
+    },
+    {
+      "id": "make",
+      "label": "Make",
+      "ecosystem": "native",
+      "summary": "The classic build tool for Makefiles.",
+      "versions": {
+        "supported": "4.x",
+        "policy": "whatever the toolchain ships"
+      },
+      "officialSource": "https://www.gnu.org/software/make/",
+      "download": {
+        "kind": "none",
+        "url": "",
+        "resolvedAtRuntime": false
+      },
+      "platforms": {
+        "win32": {
+          "x64": "partial",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "external",
+          "arm64": "external"
+        },
+        "linux": {
+          "x64": "external",
+          "arm64": "external"
+        }
+      },
+      "installerFormat": "none",
+      "checksum": {
+        "algorithm": "",
+        "published": false,
+        "where": ""
+      },
+      "signature": {
+        "kind": "",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "inside the toolchain",
+      "versionCommand": {
+        "command": "make",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "uninstall the toolchain that provided it",
+      "installMode": "guided",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [
+        "msys2"
+      ],
+      "status": "catalogued",
+      "reason": "Resolver fixed in 0.7.11 (MinGit from Git for Windows v2.56.0.windows.4 includes make.exe). However, GNU Make verification requires make --version in target environment; MinGit availability alone does not confirm GNU Make identity."
+    },
+    {
+      "id": "msys2",
+      "label": "MSYS2",
+      "ecosystem": "native",
+      "summary": "The Windows toolchain that provides GCC, Make and a POSIX shell.",
+      "versions": {
+        "supported": "recent releases",
+        "policy": "latest stable published by the project"
+      },
+      "officialSource": "https://www.msys2.org/",
+      "download": {
+        "kind": "exe",
+        "url": "https://github.com/msys2/msys2-installer/releases/latest",
+        "resolvedAtRuntime": true
+      },
+      "platforms": {
+        "win32": {
+          "x64": "full",
+          "arm64": "none"
+        },
+        "darwin": {
+          "x64": "none",
+          "arm64": "none"
+        },
+        "linux": {
+          "x64": "none",
+          "arm64": "none"
+        }
+      },
+      "installerFormat": "exe",
+      "checksum": {
+        "algorithm": "sha256",
+        "published": true,
+        "where": "the release assets publish a digest per archive"
+      },
+      "signature": {
+        "kind": "authenticode",
+        "verified": false,
+        "where": ""
+      },
+      "destination": "<userData>/tools/msys2",
+      "versionCommand": {
+        "command": "bash",
+        "args": [
+          "--version"
+        ]
+      },
+      "verification": "run the version command; a non-zero exit means the install failed",
+      "uninstall": "delete the destination folder; nothing outside <userData>/tools is touched",
+      "installMode": "managed",
+      "requiresAdmin": false,
+      "requiresReboot": false,
+      "needs": [],
+      "status": "catalogued"
+    }
+  ],
+  "stacks": {
+    "node": {
+      "label": "Node.js",
+      "runtimes": [
+        "node",
+        "npm"
+      ],
+      "packageManagers": [
+        "npm",
+        "pnpm",
+        "yarn",
+        "bun"
+      ],
+      "manifests": [
+        "package.json"
+      ],
+      "lockfiles": [
+        "package-lock.json",
+        "pnpm-lock.yaml",
+        "yarn.lock",
+        "bun.lockb"
+      ]
+    },
+    "python": {
+      "label": "Python",
+      "runtimes": [
+        "python",
+        "pip",
+        "venv"
+      ],
+      "packageManagers": [
+        "pip",
+        "uv",
+        "poetry",
+        "conda"
+      ],
+      "manifests": [
+        "requirements.txt",
+        "pyproject.toml",
+        "setup.py",
+        "Pipfile"
+      ],
+      "lockfiles": [
+        "poetry.lock",
+        "uv.lock",
+        "Pipfile.lock"
+      ]
+    },
+    "docker": {
+      "label": "Docker",
+      "runtimes": [
+        "docker",
+        "compose"
+      ],
+      "packageManagers": [],
+      "manifests": [
+        "Dockerfile",
+        "docker-compose.yml",
+        "compose.yaml"
+      ],
+      "lockfiles": []
+    },
+    "go": {
+      "label": "Go",
+      "runtimes": [
+        "go",
+        "gomod"
+      ],
+      "packageManagers": [
+        "gomod"
+      ],
+      "manifests": [
+        "go.mod"
+      ],
+      "lockfiles": [
+        "go.sum"
+      ]
+    },
+    "rust": {
+      "label": "Rust",
+      "runtimes": [
+        "rustup",
+        "cargo"
+      ],
+      "packageManagers": [
+        "cargo"
+      ],
+      "manifests": [
+        "Cargo.toml"
+      ],
+      "lockfiles": [
+        "Cargo.lock"
+      ]
+    },
+    "java": {
+      "label": "Java",
+      "runtimes": [
+        "java"
+      ],
+      "packageManagers": [
+        "maven",
+        "gradle"
+      ],
+      "manifests": [
+        "pom.xml",
+        "build.gradle",
+        "build.gradle.kts"
+      ],
+      "lockfiles": [
+        "gradle.lockfile",
+        "maven-wrapper.properties"
+      ]
+    },
+    "php": {
+      "label": "PHP",
+      "runtimes": [
+        "php",
+        "composer"
+      ],
+      "packageManagers": [
+        "composer"
+      ],
+      "manifests": [
+        "composer.json"
+      ],
+      "lockfiles": [
+        "composer.lock"
+      ]
+    },
+    "ruby": {
+      "label": "Ruby",
+      "runtimes": [
+        "ruby",
+        "bundle"
+      ],
+      "packageManagers": [
+        "bundle"
+      ],
+      "manifests": [
+        "Gemfile"
+      ],
+      "lockfiles": [
+        "Gemfile.lock"
+      ]
+    },
+    "dotnet": {
+      "label": ".NET",
+      "runtimes": [
+        "dotnet"
+      ],
+      "packageManagers": [
+        "nuget"
+      ],
+      "manifests": [
+        "*.csproj",
+        "*.fsproj",
+        "*.vbproj",
+        "*.sln"
+      ],
+      "lockfiles": [
+        "packages.lock.json"
+      ]
+    },
+    "native": {
+      "label": "Native (C/C++)",
+      "runtimes": [
+        "gcc",
+        "cmake",
+        "make"
+      ],
+      "packageManagers": [
+        "cmake",
+        "make"
+      ],
+      "manifests": [
+        "CMakeLists.txt",
+        "Makefile",
+        "configure.ac",
+        "meson.build"
+      ],
+      "lockfiles": []
+    },
+    "make": {
+      "label": "Make",
+      "runtimes": [
+        "make"
+      ],
+      "packageManagers": [
+        "make"
+      ],
+      "manifests": [
+        "Makefile",
+        "makefile"
+      ],
+      "lockfiles": []
+    }
+  },
+  "appVersion": "0.7.11"
+}

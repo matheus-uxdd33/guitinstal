@@ -1,0 +1,34 @@
+{
+  "program": {
+    "open": true,
+    "region": "Portugal (PT) first, then worldwide"
+  },
+  "supporters": [],
+  "builtWith": [
+    {
+      "name": "Electron",
+      "role": "Desktop shell",
+      "url": "https://www.electronjs.org/"
+    },
+    {
+      "name": "Node.js",
+      "role": "Local server and tooling",
+      "url": "https://nodejs.org/"
+    },
+    {
+      "name": "Git for Windows",
+      "role": "Managed Git runtime",
+      "url": "https://gitforwindows.org/"
+    },
+    {
+      "name": "SQLite",
+      "role": "Project library on this machine",
+      "url": "https://sqlite.org/"
+    },
+    {
+      "name": "GitHub REST API",
+      "role": "Repository discovery",
+      "url": "https://docs.github.com/rest"
+    }
+  ]
+}

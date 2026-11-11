@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="guit-token" content="__GUIT_TOKEN__">
+  <meta name="color-scheme" content="dark light">
+  <title>GUITinstal — your open source workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#home">
+        <img class="brand-mark" src="icon-128.png" alt="" width="38" height="38" />
+        <span class="brand-name">GUITinstal</span>
+      </a>
+
+      <nav class="side-nav">
+        <a class="nav-link active" href="#home" data-view="home"><svg aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+        <a class="nav-link" href="#projects" data-view="projects"><svg aria-hidden="true"><use href="#i-folder"/></svg><span>My projects</span><span class="nav-count" id="navProjectCount">0</span></a>
+        <a class="nav-link" href="#discover" data-view="discover"><svg aria-hidden="true"><use href="#i-compass"/></svg><span>Discover</span></a>
+        <a class="nav-link" href="#updates" data-view="updates"><svg aria-hidden="true"><use href="#i-refresh"/></svg><span>Updates</span></a>
+        <a class="nav-link" href="#tools" data-view="tools"><svg aria-hidden="true"><use href="#i-terminal"/></svg><span>Tools</span></a>
+        <a class="nav-link" href="#settings" data-view="settings"><svg aria-hidden="true"><use href="#i-settings"/></svg><span>Settings</span></a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="workspace-chip" title="Workspace folder">
+          <svg aria-hidden="true"><use href="#i-folder"/></svg>
+          <span id="workspaceLabel">loading…</span>
+        </div>
+        <button class="button button-light button-full" id="sidebarInstall">
+          <svg aria-hidden="true"><use href="#i-plus"/></svg> New project
+        </button>
+        <p class="sidebar-note">Version <span id="appVersion">…</span> · Open source. Made simple.</p>
+      </div>
+    </aside>
+
+    <div class="sidebar-scrim" id="sidebarScrim" hidden></div>
+
+    <main class="main" id="main-content" tabindex="-1">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" aria-label="Open navigation" aria-expanded="false">
+          <svg aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+        <a class="mobile-brand" href="#home"><img class="brand-mark small" src="icon-128.png" alt="" width="30" height="30" /> GUITinstal</a>
+
+        <label class="search-box">
+          <svg aria-hidden="true"><use href="#i-search"/></svg>
+          <input id="globalSearch" type="search" placeholder="Search projects…" aria-label="Search projects">
+          <kbd>⌘ K</kbd>
+        </label>
+
+        <div class="top-actions">
+          <span class="token-pill" id="tokenPill" title="GitHub token status">GitHub: no token</span>
+          <button class="icon-button" id="themeButton" aria-label="Toggle theme">
+            <svg aria-hidden="true"><use href="#i-sun"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- ============================== HOME ============================== -->
+      <section class="view active" id="view-home" aria-labelledby="homeTitle">
+        <div class="hero-card">
+          <div class="hero-copy">
+            <span class="eyebrow"><span class="eyebrow-dot"></span> WORKSPACE OPEN SOURCE</span>
+            <h1 id="homeTitle">Paste a repository.<br><span>We run the rest.</span></h1>
+            <p>We analyze the project, build an install plan, and you approve every command before it runs.</p>
+          </div>
+
+          <form class="repo-form" id="repoForm" novalidate>
+            <label class="field-label" for="repoUrl">GitHub repository URL</label>
+            <div class="input-row">
+              <span class="input-icon"><svg aria-hidden="true"><use href="#i-github"/></svg></span>
+              <input id="repoUrl" type="text" inputmode="url" spellcheck="false" autocomplete="off"
+                     placeholder="github.com/you/project"
+                     aria-describedby="repoHint">
+              <button class="button button-primary" type="submit" id="analyzeButton">
+                <span class="btn-label">Analyze</span>
+                <svg aria-hidden="true"><use href="#i-arrow-right"/></svg>
+              </button>
+            </div>
+            <p class="hint" id="repoHint">Accepts GitHub links, <code>owner/repo</code> or <code>git@github.com:owner/repo.git</code>.</p>
+            <p class="form-error" id="repoError" role="alert" hidden></p>
+          </form>
+        </div>
+
+        <div class="runtime-strip" id="runtimeStrip" aria-label="Detected runtimes"></div>
+        <p class="hint runtime-hint" id="runtimeHint">This strip is what this computer has, not a shopping list. A tool is only needed when the plan of a project asks for it; the ones with an Install button are set up inside GUITinstal, the rest keep their official page.</p>
+
+        <section class="whats-new section-block" id="whatsNewBlock" hidden aria-labelledby="whatsNewTitle">
+          <div class="section-head">
+            <h2 id="whatsNewTitle">What's new</h2>
+            <p class="section-note" id="whatsNewMeta"></p>
+          </div>
+          <div id="whatsNewBody"></div>
+        </section>
+
+        <div id="analysisArea" hidden></div>
+
+        <div class="section-block ask-block" id="askBlock">
+          <div class="section-head">
+            <h2>Ask GUITinstal</h2>
+            <p class="section-note" id="askScope">Nothing selected yet</p>
+          </div>
+          <p class="panel-hint" id="askProviderNote">
+            No AI provider is configured in this build. Answers are read from the install plan, the project record and the
+            logs on this machine — nothing is sent to a model.
+          </p>
+          <form class="discover-form" id="askForm">
+            <div class="input-row">
+              <input id="askInput" class="text-input" type="text" autocomplete="off"
+                     placeholder="Why did it fail? What does it need? How do I run it?" aria-label="Ask about this project">
+              <button class="button button-primary" type="submit" id="askButton">Ask</button>
+            </div>
+          </form>
+          <ul class="ask-answer" id="askAnswer" role="status" aria-live="polite"></ul>
+        </div>
+
+        <div class="section-block" id="discoverBlock">
+          <div class="section-head">
+            <h2>Discover on GitHub</h2>
+            <p class="section-note" id="discoverCount" aria-live="polite"></p>
+          </div>
+
+          <div class="discover-bar">
+            <div class="filter-row" id="discoverFilters" role="group" aria-label="Browse GitHub">
+              <button class="filter-chip is-active" type="button" data-mode="trending" aria-pressed="true">Trending</button>
+              <button class="filter-chip" type="button" data-mode="recent" aria-pressed="false">Recently updated</button>
+              <button class="filter-chip" type="button" data-mode="random" aria-pressed="false">Surprise me</button>
+              <button class="filter-chip" type="button" data-mode="favorites" aria-pressed="false">Favorites<span class="chip-count" id="favoriteCount">0</span></button>
+            </div>
+            <form class="discover-form" id="discoverForm">
+              <div class="input-row">
+                <span class="input-icon"><svg aria-hidden="true"><use href="#i-search"/></svg></span>
+                <input id="discoverQuery" type="search" placeholder="Search GitHub — cli, editor, bot" aria-label="Search GitHub">
+                <select id="discoverLanguage" aria-label="Filter by language">
+                  <option value="">Any language</option>
+                  <option value="JavaScript">JavaScript</option>
+                  <option value="TypeScript">TypeScript</option>
+                  <option value="Python">Python</option>
+                  <option value="Go">Go</option>
+                  <option value="Rust">Rust</option>
+                  <option value="Java">Java</option>
+                  <option value="PHP">PHP</option>
+                  <option value="Ruby">Ruby</option>
+                  <option value="C#">C#</option>
+                  <option value="Shell">Shell</option>
+                  <option value="Dockerfile">Dockerfile</option>
+                </select>
+                <button class="button button-primary" type="submit">Search</button>
+              </div>
+            </form>
+          </div>
+
+          <p class="section-note" id="discoverNote" role="status" hidden></p>
+          <p class="form-error" id="discoverError" role="alert" hidden></p>
+          <div class="card-grid" id="discoverGrid"></div>
+        </div>
+
+        <div class="section-block" id="recentBlock">
+          <div class="section-head">
+            <h2>Recent projects</h2>
+            <button class="text-button" data-goto="projects">View all</button>
+          </div>
+          <div class="card-grid" id="recentProjects"></div>
+        </div>
+      </section>
+
+      <!-- ============================ PROJECTS =========================== -->
+      <section class="view" id="view-projects" aria-labelledby="projectsTitle" hidden>
+        <div class="page-head">
+          <h1 id="projectsTitle">My projects</h1>
+          <p>Everything you installed with GUITinstal, with its launch commands saved.</p>
+        </div>
+        <div class="card-grid" id="projectsGrid"></div>
+
+        <div class="section-block" id="workspaceGalleryTools">
+          <div class="section-head">
+            <h2>Repository gallery</h2>
+            <div class="button-row button-row-tight">
+              <button class="button button-ghost" id="scanWorkspace">
+                <svg aria-hidden="true"><use href="#i-refresh"/></svg> Scan folder
+              </button>
+              <button class="button button-ghost" id="openWorkspaceGallery">
+                <svg aria-hidden="true"><use href="#i-folder"/></svg> Open folder
+              </button>
+            </div>
+          </div>
+          <p class="panel-hint" id="workspaceGalleryPath">Reading the workspace…</p>
+        </div>
+
+        <div class="section-block" id="workspaceGalleryBlock" hidden>
+          <div class="section-head">
+            <h2>Downloaded repositories</h2>
+            <p class="section-note" id="workspaceGalleryCount" aria-live="polite"></p>
+          </div>
+          <p class="panel-hint">Repositories already on disk that are not in My projects yet. Add one to keep its start command and updates.</p>
+          <div class="card-grid" id="workspaceGallery"></div>
+        </div>
+      </section>
+
+      <!-- ============================= UPDATES ============================ -->
+      <section class="view" id="view-updates" aria-labelledby="updatesTitle" hidden>
+        <div class="page-head">
+          <h1 id="updatesTitle">Updates</h1>
+          <p>Compares the local commit with the remote repository.</p>
+        </div>
+        <div class="card-grid" id="updatesGrid"></div>
+      </section>
+
+      <!-- ============================= TOOLS ============================ -->
+      <section class="view" id="view-tools" aria-labelledby="toolsTitle" hidden>
+        <div class="page-head">
+          <h1 id="toolsTitle">Installed Tools</h1>
+          <p>Manage development tools for your projects</p>
+        </div>
+        <div class="tools-grid">
+          <div class="panel" id="toolsPanel"></div>
+        </div>
+        <div class="section-block" id="installAllBlock" hidden>
+          <div class="section-head">
+            <h2>Install All Missing Tools</h2>
+            <p class="section-note" id="installAllSummary"></p>
+          </div>
+          <div class="button-row button-row-tight" id="installAllButtonRow"></div>
+          <p class="panel-hint" id="installAllHint"></p>
+        </div>
+      </section>
+
+      <!-- ============================= SETTINGS =========================== -->
+      <section class="view" id="view-settings" aria-labelledby="settingsTitle" hidden>
+        <div class="page-head">
+          <h1 id="settingsTitle">Settings</h1>
+          <p>Local GUITinstal preferences. Nothing leaves your machine.</p>
+        </div>
+
+        <div class="settings-grid">
+          <div class="panel">
+            <h3>Workspace folder</h3>
+            <p class="panel-hint">Cloned repositories land here. It has to be an existing folder with free space.</p>
+            <label class="field-label" for="workspaceInput">Absolute path</label>
+            <input id="workspaceInput" class="text-input" type="text" spellcheck="false" placeholder="C:\Users\you\GUITinstal-workspace">
+            <div class="button-row">
+              <button class="button button-primary" id="saveWorkspace">Save</button>
+              <button class="button button-ghost" id="openWorkspace">Open folder</button>
+              <button class="button button-ghost" id="resetWorkspace">Use default</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>GitHub</h3>
+            <p class="panel-hint">Signing in raises the API limit from 60 to 5000 requests per hour. Optional — public browsing works without it.</p>
+
+            <div class="account-row" id="githubAccount" hidden>
+              <img class="account-avatar" id="accountAvatar" src="icon-128.png" alt="" referrerpolicy="no-referrer" data-fallback="icon-128.png">
+              <div class="account-main">
+                <strong id="accountName">—</strong>
+                <small id="accountStatus">—</small>
+              </div>
+              <button class="button button-ghost" id="githubCheck">Check</button>
+              <button class="button button-ghost" id="githubSignOut">Sign out</button>
+            </div>
+
+            <div class="button-row button-row-tight">
+              <button class="button button-primary" id="githubSignIn"><svg aria-hidden="true"><use href="#i-github"/></svg> Sign in with GitHub</button>
+            </div>
+            <div class="device-flow" id="deviceFlow" hidden>
+              <p class="panel-hint">Open <a id="deviceLink" href="https://github.com/login/device" target="_blank" rel="noreferrer">github.com/login/device</a> and enter this code:</p>
+              <div class="device-code" id="deviceCode">••••-••••</div>
+              <p class="device-status" id="deviceStatus" role="status" aria-live="polite">Waiting for you to authorize…</p>
+              <div class="button-row">
+                <button class="button button-ghost" id="deviceCopy">Copy code</button>
+                <button class="button button-ghost" id="deviceCancel">Cancel</button>
+              </div>
+            </div>
+            <label class="field-label panel-subtitle" for="tokenInput">Or paste a personal token</label>
+            <input id="tokenInput" class="text-input" type="password" spellcheck="false" autocomplete="off" placeholder="ghp_…">
+            <div class="button-row">
+              <button class="button button-ghost" id="saveToken">Save token</button>
+              <button class="button button-ghost" id="clearToken">Remove</button>
+            </div>
+            <p class="panel-hint" id="tokenStorageNote">Saved tokens never go into config.json.</p>
+          </div>
+
+          <div class="panel">
+            <h3>Behavior</h3>
+            <label class="switch-row">
+              <input type="checkbox" id="shallowToggle">
+              <span>
+                <strong>Shallow clone</strong>
+                <small>Downloads only the latest commit. Faster and lighter, but without full history.</small>
+              </span>
+            </label>
+            <label class="switch-row">
+              <input type="checkbox" id="autoApproveToggle">
+              <span>
+                <strong>Auto-approve low-risk steps</strong>
+                <small>Clone and virtual environment setup run without asking. Everything else stays manual.</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="panel">
+            <h3>Appearance</h3>
+            <label class="field-label" for="themeSelect">Theme</label>
+            <select id="themeSelect" class="text-input">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+            </select>
+            <h3 class="panel-subtitle">Local storage</h3>
+            <p class="panel-hint" id="dataPathLabel">—</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-dot"></span>
+    <div><b id="toastTitle">Ready</b><small id="toastMessage"></small></div>
+    <button id="toastClose" aria-label="Close notice">×</button>
+  </div>
+
+  <dialog class="log-dialog" id="logDialog" aria-labelledby="logTitle">
+    <div class="console-head">
+      <svg aria-hidden="true"><use href="#i-terminal"/></svg>
+      <h3 id="logTitle">Project log</h3>
+      <span class="spacer"></span>
+      <button class="icon-button" id="logClose" aria-label="Close log">×</button>
+    </div>
+    <div class="console-body" id="logBody" role="log" aria-live="polite"></div>
+    <div class="dialog-foot">
+      <span class="card-path" id="logPath"></span>
+      <button class="button button-ghost" id="logRefresh">Reload</button>
+    </div>
+  </dialog>
+
+  <svg class="svg-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.1 1.9-2 2-1.9-1.1a8 8 0 0 1-1.7.7l-.6 2.1h-2.8l-.6-2.1a8 8 0 0 1-1.7-.7L7.4 19l-2-2 1.1-1.9a8 8 0 0 1-.7-1.7L3.7 13v-2.8l2.1-.6a8 8 0 0 1 .7-1.7L5.4 6l2-2 1.9 1.1a8 8 0 0 1 1.7-.7l.6-2.1h2.8l.6 2.1a8 8 0 0 1 1.7.7L18.6 4l2 2-1.1 1.9a8 8 0 0 1 .7 1.7l2.1.6V13l-2.1.6a8 8 0 0 1-.8 1.4z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5 8.5 8.5 0 1 0 20.5 14.3z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6s-1.2-.4-3.9 1.4a13.4 13.4 0 0 0-7.1 0C5 1.2 3.8 1.6 3.8 1.6a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.1 6.4 6.1 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4h.01"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V5h6v2m-8 0 1 13h8l1-13"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3m5 0h5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.6 5.6 6 .8-4.4 4.2 1.1 6L12 16.8 6.7 19.6l1.1-6L3.4 9.4l6-.8z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-skull" viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-7 7v3l2 2v3h10v-3l2-2v-3a7 7 0 0 0-7-7z"/><path d="M9 11h.01M15 11h.01"/></symbol>
+  </svg>
+
+  <script src="app.js"></script>
+</body>
+</html>

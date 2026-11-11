@@ -1,0 +1,12 @@
+{
+  "$comment": "Server-side configuration for the Founders offer. deadline stays null until a real campaign end date is approved: the countdown is hidden while it is null and never invents one.",
+  "founders": {
+    "deadline": null,
+    "currency": "USD",
+    "price": 49,
+    "brazilPrice": null,
+    "referencePrice": null,
+    "checkout": "disabled",
+    "updatedAt": "2026-11-04"
+  }
+}

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="How GUITinstal works after you download it: install, first run, the approval flow, SmartScreen, requirements, checksums and how to uninstall.">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="GUITinstal install guide — what happens after you download">
+  <meta property="og:description" content="Install, first run, per-command approval, SmartScreen, requirements, SHA-256 checksums and uninstall.">
+  <meta property="og:image" content="assets/screenshots/analise-1440.png">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>Install guide — how GUITinstal works · GUITinstal</title>
+</head>
+<body>
+  <div class="site-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><img class="brand-mark" src="assets/logo-128.png" alt="" width="39" height="39"><span class="brand-name">GUITinstal</span></a>
+      <nav class="side-nav" aria-label="Site">
+        <a class="nav-link" href="index.html#home"><svg><use href="#i-home"/></svg><span>Home</span></a>
+        <a class="nav-link" href="index.html#features"><svg><use href="#i-spark"/></svg><span>Features</span></a>
+        <a class="nav-link active" href="index.html#download"><svg><use href="#i-download"/></svg><span>Download</span></a>
+        <a class="nav-link" href="#security"><svg><use href="#i-shield"/></svg><span>Security</span></a>
+        <a class="nav-link" href="#faq"><svg><use href="#i-circle-help"/></svg><span>FAQ</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <a class="button button-light button-full" href="index.html#download" data-download="auto"><svg><use href="#i-download"/></svg> Download app</a>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation" aria-expanded="false"><svg><use href="#i-menu"/></svg></button>
+          <a class="mobile-brand" href="index.html"><img class="brand-mark small" src="assets/logo-128.png" alt="" width="31" height="31"> GUITinstal</a>
+        </div>
+        <div class="top-actions">
+          <button class="icon-button" id="themeButton" aria-label="Toggle contrast"><svg><use href="#i-sun"/></svg></button>
+          <a class="button button-outline small-button" href="index.html#download">Back to download <svg><use href="#i-arrow-up-right"/></svg></a>
+        </div>
+      </header>
+
+      <section class="doc-hero section-wrap">
+        <span class="section-kicker">INSTALL GUIDE · v<span id="metaVersion">—</span></span>
+        <h1>What actually happens after you press download.</h1>
+        <p class="doc-lede">GUITinstal is a desktop app that runs on your machine. It reads a public GitHub repository, detects the stack, writes an installation plan, and executes each command <b>only after you approve it</b>. Nothing is installed silently, and nothing runs in the cloud.</p>
+        <div class="hero-buttons">
+          <a class="button button-light" href="index.html#download" data-download="windows"><svg><use href="#i-download"/></svg> Download for Windows</a>
+          <a class="button button-outline" href="#steps">See the whole flow <svg><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="steps">
+        <div class="download-heading"><span class="section-kicker">END TO END</span><h2>From download to running project.</h2><p>Eight moments, with the time each one really takes.</p></div>
+        <ol class="timeline">
+          <li class="tl-step"><span class="tl-num">1</span><div><h3>You download one .exe</h3><p>A single installer file, about <span data-file-field="setup.size">115 MB</span>. No account, no email, no credit card.</p></div><time>1–3 min, depends on your connection</time></li>
+          <li class="tl-step"><span class="tl-num">2</span><div><h3>Windows warns you first</h3><p>The build is unsigned, so SmartScreen shows "publisher could not be verified". <a class="inline-link" href="#smartscreen">Here is why and what to click</a>.</p></div><time>10 seconds, once</time></li>
+          <li class="tl-step"><span class="tl-num">3</span><div><h3>The installer copies the app</h3><p>You pick the folder, it creates a Start menu and desktop shortcut. Roughly 450 MB on disk.</p></div><time>about 30 seconds</time></li>
+          <li class="tl-step"><span class="tl-num">4</span><div><h3>First run starts a local server</h3><p>The window you see is served by a small Node server bound to <code>127.0.0.1</code> on a random port. It never listens on your network and never leaves your machine.</p></div><time>2–4 seconds</time></li>
+          <li class="tl-step"><span class="tl-num">5</span><div><h3>You paste a GitHub URL</h3><p><code>github.com/owner/repo</code>, <code>owner/repo</code> or <code>git@github.com:owner/repo.git</code>. Only github.com is accepted.</p></div><time>5 seconds</time></li>
+          <li class="tl-step"><span class="tl-num">6</span><div><h3>It reads the repo and writes a plan</h3><p>Manifests such as <code>package.json</code>, <code>requirements.txt</code>, <code>go.mod</code>, <code>Dockerfile</code>, <code>compose.yaml</code>, <code>pom.xml</code> decide the steps: clone, virtualenv, dependencies, build, start. Each step shows the exact command and a risk label.</p></div><time>3–15 seconds</time></li>
+          <li class="tl-step"><span class="tl-num">7</span><div><h3>You approve, one step at a time</h3><p>Nothing runs until you click <em>Approve and run</em> — or approve the whole plan at once. You can skip optional steps and cancel mid-way. Output streams live into the console.</p></div><time>as long as you want</time></li>
+          <li class="tl-step"><span class="tl-num">8</span><div><h3>The project joins "My projects"</h3><p>Start it again later, <code>git pull --ff-only</code> to update, open the folder, or remove it from the registry. Your approvals are remembered per project.</p></div><time>forever, offline</time></li>
+        </ol>
+      </section>
+
+      <section class="doc-section section-wrap">
+        <div class="download-heading"><span class="section-kicker">NO MOCKUPS</span><h2>The real window, three moments.</h2><p>Captured from the desktop app on Windows.</p></div>
+        <div class="shot-grid">
+          <figure class="shot-card"><img src="assets/screenshots/home-1440.png" width="1440" height="900" alt="GUITinstal home screen with the sidebar, search and recent projects" loading="lazy"><figcaption><b>Home</b><span>Your workspace: recent projects, search, and the URL box.</span></figcaption></figure>
+          <figure class="shot-card"><img src="assets/screenshots/analise-1440.png" width="1440" height="1100" alt="Installation plan for psf/requests showing three steps with risk labels and approve buttons" loading="lazy"><figcaption><b>The plan</b><span>Every command, its purpose, its risk, and an approve button.</span></figcaption></figure>
+          <figure class="shot-card"><img src="assets/screenshots/projetos-1440.png" width="1440" height="900" alt="My projects list showing installed repositories with stack, commit and branch" loading="lazy"><figcaption><b>My projects</b><span>Installed repos with stack, commit and branch, ready to start.</span></figcaption></figure>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="other-platforms">
+        <div class="download-heading"><span class="section-kicker">MACOS AND LINUX</span><h2>Choose your download.</h2><p>The buttons become active when each installer is published in the latest release.</p></div>
+        <div class="file-cards">
+          <article class="file-card">
+            <header><span class="file-tag">Universal</span><h3>macOS DMG</h3></header>
+            <p>One disk image for Intel and Apple silicon Macs. The app is currently unsigned, so macOS may warn that the developer is unidentified.</p>
+            <dl class="spec">
+              <dt>File</dt><dd><code data-file-field="macos.universal.name">Not published yet</code></dd>
+              <dt>Size</dt><dd><span data-file-field="macos.universal.size">Not published yet</span></dd>
+              <dt>SHA-256</dt><dd class="sha"><code data-file-field="macos.universal.sha">—</code></dd>
+            </dl>
+            <a class="button button-light button-full" href="index.html#download" data-file="macos:universal"><svg><use href="#i-download"/></svg> Download for macOS</a>
+          </article>
+          <article class="file-card">
+            <header><span class="file-tag">x86_64</span><h3>Linux AppImage</h3></header>
+            <p>A portable AppImage for 64-bit Linux. Some distributions require FUSE 2 support to launch AppImages.</p>
+            <dl class="spec">
+              <dt>File</dt><dd><code data-file-field="linux.appimage.name">Not published yet</code></dd>
+              <dt>Size</dt><dd><span data-file-field="linux.appimage.size">Not published yet</span></dd>
+              <dt>SHA-256</dt><dd class="sha"><code data-file-field="linux.appimage.sha">—</code></dd>
+            </dl>
+            <a class="button button-light button-full" href="index.html#download" data-file="linux:appimage"><svg><use href="#i-download"/></svg> Download for Linux</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="files">
+        <div class="download-heading"><span class="section-kicker">CHOOSE YOUR FILE</span><h2>Two Windows builds.</h2><p>Same app. Pick installer if you want shortcuts, portable if you want no trace in the registry.</p></div>
+        <div class="file-cards">
+          <article class="file-card">
+            <header><span class="file-tag">Recommended</span><h3>Setup (NSIS)</h3></header>
+            <p>Installs to your user folder, creates Start menu and desktop shortcuts, and appears in "Apps &amp; features" so you can uninstall normally.</p>
+            <dl class="spec">
+              <dt>File</dt><dd><code data-file-field="setup.name">GUITinstal-Setup-x64.exe</code></dd>
+              <dt>Size</dt><dd><span data-file-field="setup.size">116.1 MB</span> (<span data-file-field="setup.bytes">121,786,758</span> bytes)</dd>
+              <dt>SHA-256</dt><dd class="sha"><code data-file-field="setup.sha">—</code></dd>
+            </dl>
+            <a class="button button-light button-full" href="index.html#download" data-file="setup"><svg><use href="#i-download"/></svg> Download setup</a>
+          </article>
+          <article class="file-card">
+            <header><h3>Portable</h3></header>
+            <p>One file, no installation. It unpacks to a temporary folder when you run it — handy on a machine where you cannot install software.</p>
+            <dl class="spec">
+              <dt>File</dt><dd><code data-file-field="portable.name">GUITinstal-Portable-x64.exe</code></dd>
+              <dt>Size</dt><dd><span data-file-field="portable.size">105.4 MB</span> (<span data-file-field="portable.bytes">110,564,434</span> bytes)</dd>
+              <dt>SHA-256</dt><dd class="sha"><code data-file-field="portable.sha">—</code></dd>
+            </dl>
+            <a class="button button-outline button-full" href="index.html#download" data-file="portable"><svg><use href="#i-download"/></svg> Download portable</a>
+          </article>
+        </div>
+        <p class="verify-note"><svg><use href="#i-shield"/></svg><span>Verify the file before running it: <code>certutil -hashfile <span data-file-field="setup.name">GUITinstal-Setup-x64.exe</span> SHA256</code> (Windows) or <code>shasum -a 256</code> (macOS, Linux). The value must match the one above.</span></p>
+      </section>
+
+      <section class="doc-section section-wrap" id="smartscreen">
+        <div class="download-heading"><span class="section-kicker">READ THIS BEFORE THE FIRST RUN</span><h2>The Windows warning, explained.</h2><p>We are not going to pretend it does not exist.</p></div>
+        <div class="callout">
+          <h3>Why you see "publisher could not be verified"</h3>
+          <p>SmartScreen trusts files that carry a code-signing certificate bought from a certificate authority and reputation built up over many downloads. This build is signed by nobody: it is an open-source project, and an Extended Validation certificate costs a few hundred dollars a year plus a registered company. Rather than delay the release, we publish the raw build and tell you the truth.</p>
+          <ol class="mini-steps">
+            <li>Run the .exe. The blue window says "Windows protected your PC".</li>
+            <li>Click <b>More info</b> — the text expands to show the publisher.</li>
+            <li>Click <b>Run anyway</b>.</li>
+            <li>If your antivirus still blocks it, add an exception for the install folder and report the file hash to us.</li>
+          </ol>
+          <p class="callout-foot"><svg><use href="#i-info"/></svg> You can also skip the installer entirely: read the source and run it from Node.js (see <a class="inline-link" href="#source">Run from source</a>). That path compiles nothing and installs nothing.</p>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="security">
+        <div class="download-heading"><span class="section-kicker">WHAT IT CAN AND CANNOT DO</span><h2>The honest boundary.</h2><p>Read this once and you will know exactly what is running on your machine.</p></div>
+        <div class="split">
+          <div class="split-col">
+            <h3><svg><use href="#i-check-circle"/></svg> What it does</h3>
+            <ul class="tick-list">
+              <li>Starts an HTTP server bound to <code>127.0.0.1</code> only, on a random port, for the lifetime of the window.</li>
+              <li>Requires a per-session token on every request; requests with a foreign <code>Host</code> header get <code>403</code>, which blocks DNS-rebinding from any other page you have open.</li>
+              <li>Runs commands as an argument array with <code>shell: false</code>, so repository content is never parsed as shell syntax. On Windows, npm runs as <code>node npm-cli.js</code> to avoid <code>npm.cmd</code>.</li>
+              <li>Executes a step only after that exact step was approved in the UI.</li>
+              <li>Checks free disk space in your work folder before cloning, and warns or stops when it is critical.</li>
+              <li>Stores everything locally: settings, project registry and logs under <code>%APPDATA%\GUITinstal</code>.</li>
+            </ul>
+          </div>
+          <div class="split-col">
+            <h3><svg><use href="#i-circle-help"/></svg> What it does not</h3>
+            <ul class="cross-list">
+              <li>It never uploads your code, your tokens or your project list anywhere. There is no telemetry and no account.</li>
+              <li>It does not listen on your LAN or the internet, so other devices on your network cannot reach it.</li>
+              <li>It does not install anything before you approve. There is no background updater and no scheduled job.</li>
+              <li>It does not accept URLs from git hosts other than github.com.</li>
+              <li>It does not need admin rights; it installs into your user profile.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="verify-note"><svg><use href="#i-info"/></svg><span>One real caveat: your GitHub token is stored as plain text in <code>config.json</code> on your own machine. On a shared computer, use a token scoped to public data only.</span></p>
+      </section>
+
+      <section class="doc-section section-wrap">
+        <div class="download-heading"><span class="section-kicker">BEFORE YOU DOWNLOAD</span><h2>Requirements.</h2><p>Windows 10 and 11, 64-bit.</p></div>
+        <table class="spec-table">
+          <thead><tr><th>Component</th><th>Needed</th><th>What you get without it</th></tr></thead>
+          <tbody>
+            <tr><td>Windows 10 / 11 x64</td><td class="yes">Required</td><td>—</td></tr>
+            <tr><td>Free disk</td><td class="yes">450 MB</td><td>The app refuses to install into a nearly full drive.</td></tr>
+            <tr><td>Git</td><td class="warn">Recommended</td><td>Cloning fails; you can still browse and search repositories.</td></tr>
+            <tr><td>Node.js, Python, Go, Java, PHP, Rust, uv, Bun</td><td class="opt">Optional</td><td>Missing ones GUITinstal installs itself when an adapter exists — see the runtime support table below.</td></tr>
+            <tr><td>Docker, Maven, Gradle, .NET, Ruby</td><td class="opt">Optional</td><td>No adapter yet: the plan links the official page and the steps that need them wait.</td></tr>
+            <tr><td>GitHub personal token</td><td class="opt">Optional</td><td>Anonymous API allows 60 requests/hour; a token raises it to 5,000.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="doc-section section-wrap" id="runtimes">
+        <div class="download-heading"><span class="section-kicker">WHAT IT CAN INSTALL BY ITSELF</span><h2>Runtime support, without the marketing.</h2><p>Each adapter resolves the current release from the vendor's own index and verifies the published checksum before anything runs.</p></div>
+        <table class="spec-table">
+          <thead><tr><th>Runtime</th><th>GUITinstal installs it</th><th>Where the version and checksum come from</th></tr></thead>
+          <tbody>
+            <tr><td>Node.js with npm</td><td class="yes">Yes</td><td>nodejs.org release index and <code>SHASUMS256.txt</code></td></tr>
+            <tr><td>Python 3 with pip</td><td class="yes">Yes</td><td>python-build-standalone release and <code>SHA256SUMS</code></td></tr>
+            <tr><td>Go</td><td class="yes">Yes</td><td>go.dev release index</td></tr>
+            <tr><td>Java (Temurin JDK 21)</td><td class="yes">Yes</td><td>api.adoptium.net package digest</td></tr>
+            <tr><td>uv</td><td class="yes">Yes</td><td>astral-sh/uv release and <code>.sha256</code></td></tr>
+            <tr><td>Bun</td><td class="yes">Yes</td><td>oven-sh/bun release and <code>SHASUMS256.txt</code></td></tr>
+            <tr><td>PHP 8 and Composer</td><td class="yes">Yes</td><td>windows.php.net and getcomposer.org digests</td></tr>
+            <tr><td>Rust (rustup and cargo)</td><td class="yes">Yes</td><td>static.rust-lang.org digest</td></tr>
+            <tr><td>Maven, Gradle</td><td class="warn">Guided</td><td>Install from the official page; the plan attaches the URL</td></tr>
+            <tr><td>.NET SDK, NuGet, MSBuild</td><td class="warn">Guided</td><td>No adapter yet</td></tr>
+            <tr><td>Ruby, Bundler</td><td class="warn">Guided</td><td>No adapter yet</td></tr>
+            <tr><td>Docker Desktop and Compose</td><td class="warn">Guided</td><td>Needs administrator rights, which GUITinstal never requests</td></tr>
+            <tr><td>GCC, Clang, Make, MSYS2, CMake</td><td class="warn">Guided</td><td>No adapter yet</td></tr>
+          </tbody>
+        </table>
+        <p class="verify-note"><svg><use href="#i-info"/></svg><span>Adapters are Windows only. On macOS and Linux every runtime is a guided install, and the app says so instead of offering a button that cannot work.</span></p>
+      </section>
+
+      <section class="doc-section section-wrap" id="source">
+        <div class="download-heading"><span class="section-kicker">MACOS · LINUX · NO INSTALLER</span><h2>Run it from source.</h2><p>The app has zero npm dependencies. It requires Node.js 24+ for the built-in SQLite library.</p></div>
+        <div class="code-block" tabindex="0" role="region" aria-label="Commands to run GUITinstal from source">
+          <p>git clone https://github.com/your-name/guitinstal.git
+cd guitinstal/app
+node server/main.js --open</p>
+          <p class="code-caption">That starts the local server and opens the interface in its own window using your installed Chrome or Edge. On macOS and Linux the same three lines are the current way to run it; native builds are on the roadmap.</p>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="uninstall">
+        <div class="download-heading"><span class="section-kicker">CLEAN EXIT</span><h2>Uninstall.</h2><p>Your cloned projects are yours and stay on disk.</p></div>
+        <div class="split">
+          <div class="split-col"><h3>Setup build</h3><ol class="mini-steps"><li>Windows Settings → Apps → Installed apps → GUITinstal → Uninstall.</li><li>Or run <code>Uninstall GUITinstal.exe</code> from the Start menu folder.</li></ol></div>
+          <div class="split-col"><h3>Leftover data</h3><p>Delete <code>%APPDATA%\GUITinstal</code> to remove settings and the project registry. Repositories you installed live in your work folder (default <code>~\GUITinstal-workspace</code>) and are never touched by the uninstaller.</p></div>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="faq">
+        <div class="download-heading"><span class="section-kicker">QUESTIONS</span><h2>Frequently asked.</h2><p>Including the awkward ones.</p></div>
+        <div class="faq-list">
+          <details><summary>Does it work offline?</summary><p>The app itself runs offline. Cloning and reading a repository obviously need internet, and so does downloading dependencies. Once a project is installed, starting it again is fully local.</p></details>
+          <details><summary>Why did a step fail with "Are you sure (Y/N)"?</summary><p>Some projects ship scripts that ask for confirmation — <code>sindresorhus/is</code> runs <code>del distribution</code>, which prompts on Windows. The app closes the input stream on purpose so nothing can wait for you unknowingly, which means such a step fails instead of hanging. Skip the step or run that one command yourself in a terminal.</p></details>
+          <details><summary>Can it run a command I do not want?</summary><p>No. The engine only executes a step after the UI marked it approved, and approval is per step. Cancelling stops the queue immediately.</p></details>
+          <details><summary>Is my GitHub token sent anywhere?</summary><p>It is sent only to <code>api.github.com</code> to raise your rate limit and read private repositories you can already see. It is stored in plain text in <code>config.json</code> on your machine — use a restricted token on shared computers.</p></details>
+          <details><summary>Why is the installer 115 MB for such a small app?</summary><p>Your app code is a few hundred kilobytes. The rest is the Chromium and Node runtime that Electron bundles so the window looks identical on every machine. A smaller build using the system webview is on the roadmap.</p></details>
+          <details><summary>Where is the source code?</summary><p>It is open source under the MIT licence. The repository link appears in the sidebar as soon as the public repo is published.</p></details>
+          <details><summary>What is coming next?</summary><p>Code signing, a queue of installs instead of one at a time, and a smaller runtime. See the roadmap in the repository.</p></details>
+        </div>
+      </section>
+
+      <section class="doc-section section-wrap" id="limits">
+        <div class="download-heading"><span class="section-kicker">KNOWN LIMITS</span><h2>What is not perfect yet.</h2><p>We would rather you find this list here than discover it at 1 a.m.</p></div>
+        <ul class="cross-list limits">
+          <li>One installation at a time — there is no queue.</li>
+          <li><code>docker compose up</code> needs <code>docker</code> on the PATH of the app process; Docker Desktop installs where that is not always true.</li>
+          <li>Maven, Gradle, .NET, Ruby, Docker and the C/C++ toolchains have no installer adapter yet: they are guided installs with the official page attached.</li>
+          <li>The runtime adapters are Windows only, so macOS and Linux are guided-only for every runtime.</li>
+          <li>Windows and macOS builds are unsigned; SmartScreen and Gatekeeper may warn before the first run.</li>
+          <li>Runtime installers are Windows-only. On macOS and Linux, missing runtimes must be installed from their official sources.</li>
+        </ul>
+      </section>
+
+      <section class="final-cta section-wrap">
+        <img class="cta-symbol" src="assets/logo-128.png" alt="" width="51" height="51">
+        <span class="section-kicker">OPEN SOURCE. MADE SIMPLE.</span>
+        <h2>Try it on a repository you already know.</h2>
+        <p>Paste a URL, read the plan, approve the commands. That is the whole product.</p>
+        <a class="button button-light" href="index.html#download" data-download="auto">Get GUITinstal <svg><use href="#i-arrow-right"/></svg></a>
+      </section>
+
+      <footer class="footer section-wrap">
+        <a class="footer-brand" href="index.html"><img class="brand-mark small" src="assets/logo-128.png" alt="" width="31" height="31"><span><b>GUITinstal</b><small>Build · Explore · Innovate</small></span></a>
+        <div class="footer-links"><a href="index.html#features">Features</a><a href="index.html#download">Download</a><a href="#smartscreen">SmartScreen</a><a href="#faq">FAQ</a></div>
+        <div class="footer-social" id="footerSocial"><a data-link="github" target="_blank" rel="noreferrer" aria-label="Source code"><svg><use href="#i-github"/></svg></a><a data-link="discord" target="_blank" rel="noreferrer" aria-label="Community"><svg><use href="#i-discord"/></svg></a></div>
+        <p class="copyright">© <span id="year">2026</span> GUITinstal · MIT licence · Not affiliated with GitHub, Inc.</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast" id="downloadToast" role="status" aria-live="polite"><span class="toast-dot"></span><div><b id="toastTitle">Heads up</b><small id="toastMessage">Loading the latest release.</small></div><button id="toastClose" aria-label="Dismiss notification">×</button></div>
+
+  <svg class="svg-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-6v-7h-4v7H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2zM19 15l1 2.5 2.5 1-2.5 1L19 22l-1-2.5-2.5-1 2.5-1z"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4 13 21l-10-10V3h8z"/><circle cx="7.5" cy="7.5" r="1.2"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22zM4 5.5V22"/><path d="M8 7h8M8 11h8"/></symbol>
+    <symbol id="i-circle-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.4 1.6c-1.2 1.1-2 1.4-2 3M12 17.5h.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 18v3h16v-3"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.1-1.5 6.1-6.7a5.2 5.2 0 0 0-1.4-3.6 4.8 4.8 0 0 0-.1-3.6s-1.2-.4-3.9 1.4a13.4 13.4 0 0 0-7.1 0C5 1.2 3.8 1.6 3.8 1.6a4.8 4.8 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.1 6.4 6.1 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></symbol>
+    <symbol id="i-youtube" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z"/></symbol>
+    <symbol id="i-discord" viewBox="0 0 24 24"><path d="M7 7.5a15 15 0 0 1 10 0l2 2.5 1 8a14 14 0 0 1-5 2l-1-2M7 7.5 5 10l-1 8a14 14 0 0 0 5 2l1-2"/><path d="M8 16s1.5 1 4 1 4-1 4-1M9 12h.01M15 12h.01"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m4 4 16 16M20 4 4 20M4 4h5l11 16h-5z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5 8.5 8.5 0 1 0 20.5 14.3z"/></symbol>
+    <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16m-7-7 7 7-7 7"/></symbol>
+    <symbol id="i-windows" viewBox="0 0 24 24"><path d="M3 5.2 10.5 4v7H3zm8.5-1.4L21 2v9h-9.5zM3 13h7.5v7L3 18.8zm8.5 0H21v9l-9.5-1.8z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24"><path d="M16.5 13c0-2.1 1.7-3.1 1.8-3.2a4 4 0 0 0-3.2-1.7c-1.4-.1-2.7.8-3.4.8s-1.8-.8-3-.8a4.5 4.5 0 0 0-3.8 2.3c-1.6 2.8-.4 7 1.1 9.3.7 1.1 1.5 2.3 2.6 2.2 1-.1 1.4-.7 2.7-.7s1.7.7 2.8.7 1.8-1.1 2.5-2.2a10 10 0 0 0 1.1-2.3A3.7 3.7 0 0 1 16.5 13zM14.6 5.8A4 4 0 0 0 15.5 3a4.1 4.1 0 0 0-2.7 1.4 3.8 3.8 0 0 0-1 2.7 3.5 3.5 0 0 0 2.8-1.3z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-linux" viewBox="0 0 24 24"><path d="M12 3c-2.5 0-3.5 2-3.5 4.5v3L6 14l1 4 2 3h6l2-3 1-4-2.5-3.5v-3C15.5 5 14.5 3 12 3z"/><path d="M9 11h6M10 15h.01M14 15h.01M10 18h4M8.5 8h7"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8z"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.5 9A7 7 0 0 1 18 6l2 6M4 12l2 6a7 7 0 0 0 12.5-3"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.1 1.9-2 2-1.9-1.1a8 8 0 0 1-1.7.7l-.6 2.1h-2.8l-.6-2.1a8 8 0 0 1-1.7-.7L7.4 19l-2-2 1.1-1.9a8 8 0 0 1-.7-1.7L3.7 13v-2.8l2.1-.6a8 8 0 0 1 .7-1.7L5.4 6l2-2 1.9 1.1a8 8 0 0 1 1.7-.7l.6-2.1h2.8l.6 2.1a8 8 0 0 1 1.7.7L18.6 4l2 2-1.1 1.9a8 8 0 0 1 .7 1.7l2.1.6V13l-2.1.6a8 8 0 0 1-.8 1.4z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-2-11-4 14"/></symbol>
+    <symbol id="i-python" viewBox="0 0 24 24"><path d="M12 3c-4 0-4 1.5-4 3v3h8v1H6c-2 0-3 1.5-3 4s1 4 3 4h2v-3c0-2 1-3 3-3h5c2 0 3-1.5 3-3V6c0-2-2-3-7-3z"/><path d="M9 21h4c4 0 4-1.5 4-3v-3H9v-1h10c2 0 2-1.5 2-4s-1-4-3-4h-2v3c0 2-1 3-3 3h-4c-2 0-3 1.5-3 3v2c0 2 1 4 3 4z"/><circle cx="10" cy="6" r=".7" fill="currentColor"/><circle cx="14" cy="18" r=".7" fill="currentColor"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8m-4-16 9 5"/></symbol>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M5 15c-1.5 1-2 3.5-2 5 1.5 0 4-.5 5-2m-3-3 7-7c3-3 7-3 9-3 0 2 0 6-3 9l-7 7-6-6z"/><circle cx="15" cy="9" r="2"/><path d="m5 19-2 2"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 12l9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.1 0l3-3A5 5 0 0 0 13 2.9l-1.7 1.7M14 11a5 5 0 0 0-7.1 0l-3 3A5 5 0 0 0 11 21.1l1.7-1.7"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 0 1 1-1h3m8 0h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3m-8 0H5a1 1 0 0 1-1-1v-3M4 12h16"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+  </svg>
+  <script src="script.js"></script>
+</body>
+</html>

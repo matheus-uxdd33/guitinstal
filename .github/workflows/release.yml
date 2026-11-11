@@ -1,0 +1,87 @@
+name: Build and publish desktop release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows
+            os: windows-latest
+            command: dist:win
+            artifact: release-windows
+            files: |
+              app/dist/GUITinstal-*-Setup-x64.exe
+              app/dist/GUITinstal-*-Portable-x64.exe
+          - name: macOS
+            os: macos-latest
+            command: dist:mac
+            artifact: release-macos
+            files: app/dist/GUITinstal-*-mac-universal.dmg
+          - name: Linux
+            os: ubuntu-24.04
+            command: dist:linux
+            artifact: release-linux
+            files: app/dist/GUITinstal-*-linux-x64.AppImage
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Verify release tag matches app version
+        run: node -e "if ('v' + require('./app/package.json').version !== process.env.GITHUB_REF_NAME) process.exit(1)"
+
+      - if: matrix.os == 'ubuntu-24.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libfuse2t64
+
+      - run: npm ci
+        working-directory: app
+
+      - run: npm run check
+        working-directory: app
+
+      - run: npm run ${{ matrix.command }}
+        working-directory: app
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release-assets/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "GUITinstal $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag

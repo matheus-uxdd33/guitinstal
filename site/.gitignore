@@ -1,0 +1,6 @@
+.vercel
+.env*
+node_modules
+# Local publish credentials written by hand; never commit a token.
+*-token
+*-token.json

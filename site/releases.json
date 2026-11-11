@@ -1,0 +1,32 @@
+{
+  "version": "0.7.11",
+  "releasedAt": "2026-11-09",
+  "releaseNotes": "Cross-platform downloads will appear after the first tagged release.",
+  "installGuide": "download.html",
+  "links": {
+    "github": "https://github.com/matheus-uxdd33/guitinstal",
+    "discord": "",
+    "x": "",
+    "youtube": ""
+  },
+  "platforms": {
+    "windows": {
+      "label": "Windows 10 / 11 (64-bit)",
+      "status": "pending",
+      "requirement": "450 MB free disk. Node.js, Git and Python are optional but unlock more stacks.",
+      "files": []
+    },
+    "macos": {
+      "label": "macOS",
+      "status": "pending",
+      "requirement": "Universal DMG for Intel and Apple silicon.",
+      "files": []
+    },
+    "linux": {
+      "label": "Linux",
+      "status": "pending",
+      "requirement": "x86_64 AppImage.",
+      "files": []
+    }
+  }
+}
