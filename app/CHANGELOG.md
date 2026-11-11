@@ -7,6 +7,16 @@ Every release is a single entry here. The version in this file, the version in
 Semantic versioning: `MAJOR` breaks an existing workflow, `MINOR` adds a
 capability, `PATCH` fixes behaviour without changing the interface.
 
+## [0.7.12] - 2026-11-10
+
+### Fixed
+
+- **Folder and Terminal actions now report whether they actually opened.**
+  Windows uses the system Explorer and Command Prompt paths instead of relying
+  on PATH, and process-launch errors are detected instead of showing success
+  when no window appeared. The library UI now confirms a successful open and
+  gives a clear error when the folder or terminal is unavailable.
+
 ## [0.7.9] - 2026-11-09
 
 ### Fixed
@@ -146,4 +156,3 @@ capability, `PATCH` fixes behaviour without changing the interface.
 ### Changed
 - **Runtime install resolvers** overhauled in `core/runtime-install.js` with 12 resolver functions, SHA-256 verification, and pinned checksums.
 - **Adapter check** now passes 138/143 checks (96.5%), up from previous failures.
-

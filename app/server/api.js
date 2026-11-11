@@ -1427,4 +1427,4 @@ async function readJsonBody(req) {
   }
 }
 
-module.exports = { analyze, json, readJsonBody, registerProject, routes, runs, runtimeStatus };
+module.exports = { analyze, json, openFolder, openTerminal, readJsonBody, registerProject, routes, runs, runtimeStatus };

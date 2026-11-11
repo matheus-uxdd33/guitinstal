@@ -717,7 +717,7 @@
   async function openWorkspaceRepo(directory) {
     try {
       const result = await api('/api/workspace/repos/open', { method: 'POST', body: { directory } });
-      if (result.ok) toast('Folder opened', 'The repository folder is open in File Explorer.', 'success');
+      if (result.ok) toast('Folder opened', 'The repository folder is open in your file manager.', 'success');
       else toast('Could not open folder', 'The folder no longer exists or Windows could not open it.', 'error');
     } catch (error) {
       toast('Could not open', error.message, 'error');
@@ -1591,7 +1591,7 @@
         $('#askInput').focus();
       } else if (action === 'open') {
         const result = await api(`/api/projects/${encodeURIComponent(id)}/open`, { method: 'POST' });
-        if (result.ok) toast('Folder opened', 'The project folder is open in File Explorer.', 'success');
+        if (result.ok) toast('Folder opened', 'The project folder is open in your file manager.', 'success');
         else toast('Could not open folder', 'The folder no longer exists or Windows could not open it.', 'error');
       } else if (action === 'terminal') {
         const result = await api(`/api/projects/${encodeURIComponent(id)}/terminal`, { method: 'POST' });
