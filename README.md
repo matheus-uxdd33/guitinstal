@@ -16,11 +16,11 @@ node app/tools/serve-site.js 4173  # preview the website
 
 **Short — for the GitHub "About" field (max 350 chars):**
 
-> Set up any GitHub project in one click. GUITinstal reads a repository, detects the
-> stack, builds an install plan, and runs each command only after you approve it.
-> Free, offline desktop app for Windows, macOS and Linux.
+> Keep GitHub projects in a personal install library. GUITinstal detects each
+> project's stack, prepares it locally, and lets you run it again from your library.
+> Free desktop app for Windows, macOS and Linux.
 
-**Long — for the repo header, release notes and store listings:**
+**Long — for the repository header and release notes:**
 
 > GUITinstal is a cross-platform desktop app that turns any GitHub repository into a working
 > local project. Paste a URL or a `owner/repo` name and GUITinstal fetches the
@@ -31,8 +31,10 @@ node app/tools/serve-site.js 4173  # preview the website
 > the exact command line first. Progress streams into a live console, and every run is
 > recorded per project so you can retry a failed step instead of starting over.
 >
-> It runs entirely on your machine. There is no account, no telemetry and no cloud
-> service: GUITinstal talks to GitHub over HTTPS, writes its plan, and shells out to
+> The projects and their library stay on your machine. There is no telemetry or
+> GUITinstal cloud service. GitHub sign-in is optional and only raises the public
+> API limit; it does not request access to private repositories. GUITinstal talks
+> to GitHub over HTTPS, writes its plan, and shells out to
 > the toolchains you already have. The local server binds to `127.0.0.1` only, on a
 > random port, and every request needs a per-session token, so nothing else on your
 > network can drive it. Commands are launched as argument arrays with `shell: false`,
@@ -43,9 +45,9 @@ node app/tools/serve-site.js 4173  # preview the website
 > projects open in the browser automatically; GUITinstal also records output so
 > startup failures can be diagnosed from the app.
 >
-> Built with pure Node.js and packaged with Electron for Windows, macOS and Linux.
-> Windows ships NSIS and portable x64 installers, macOS a universal DMG, and Linux
-> an x86_64 AppImage. Builds are unsigned; macOS may warn before opening the app.
+> Built with Node.js and packaged with Electron. Public Windows installers are
+> available from GitHub Releases. Linux users can run the app from this public
+> repository with Node.js 24+ and Git; a Linux AppImage is not published yet.
 
 ## Universal Engine configuration
 
@@ -128,19 +130,21 @@ Pass a URL once and it stays in `site/releases.json` on later runs. An icon whos
 URL is empty is removed from the page rather than rendered as a dead link.
 
 `make-site-release.js` can write local build metadata to `site/releases.json`.
-On the public site, the buttons read the latest public GitHub Release directly,
-so publishing the release assets activates the Windows, macOS and Linux downloads.
+On the public site, the buttons read the latest public GitHub Release directly.
+Until a Linux AppImage is published, the Linux button opens the repository-based
+setup steps in `site/download.html`.
 
 The installers are **unsigned**: Windows SmartScreen and macOS Gatekeeper may warn
 before the first run. The site documents this instead of hiding it
 (see `site/download.html`).
 
-## Why the .exe is not inside the site folder
+## Hosting installers
 
-A Vercel Hobby deploy is capped at 100 MB of uploaded source, and the installer is
-115 MB. Free bandwidth is 100 GB/month, which is roughly 860 downloads. So the
-binaries belong on GitHub Releases (2 GB per file, free) or object storage, and the
-Vercel site links out to them.
+The Vercel site serves the landing page and install guide, not the large installer
+files: the Windows installer is about 122 MB, above the 100 MB deploy upload cap.
+Windows currently downloads from GitHub Releases. Linux users can run the public
+source with Node.js 24+ and Git; a Linux AppImage can be added to a future GitHub
+Release and will be detected automatically by the site.
 
 ## Publishing the website
 
@@ -152,7 +156,10 @@ vercel --prod
 
 ## Known state of things
 
-- The desktop packaging targets Windows, macOS and Linux. Runtime adapters are
+- Windows installers are published on GitHub Releases. Linux packaging targets
+  an x86_64 AppImage, but no Linux binary is currently published; the website
+  directs Linux users to run the public repository source with Node.js 24+.
+- Runtime adapters are
   currently Windows-only, so macOS/Linux guide users to install missing runtimes
   from their official sources.
 - The app interface is in English, the same as the website.

@@ -3,12 +3,11 @@
 /**
  * Where the GitHub token is allowed to live.
  *
- * config.json is plain text: anything written there can be read by any process
- * the user runs and it rides along into backups. On Windows the token is
- * therefore sealed with DPAPI (the operating system's per-user key) and stored
- * as an opaque blob that only the same user on the same machine can open.
- * Elsewhere the app keeps the token in memory for the running session and says
- * so, instead of quietly dropping it into a text file.
+ * config.json is plain text: credentials never belong there. Windows uses
+ * DPAPI, Linux uses Secret Service through secret-tool when available, and
+ * macOS currently keeps the credential in memory for the running session.
+ * Unsupported or locked keyrings fail visibly instead of writing a plaintext
+ * token to disk.
  */
 
 const fs = require('node:fs');
@@ -20,6 +19,39 @@ const { userDataDir, ensureDir } = require('./paths');
 const ENTROPY = 'GUITinstal/github-token';
 const FILE_NAME = 'github-token.dpapi';
 const MARKER = 'guitinstal-protected-v1:';
+const LINUX_ATTRIBUTES = ['service', 'guitinstal', 'account', 'github-token'];
+
+function runSecretTool(args, input = '') {
+  return execFileSync('secret-tool', args, {
+    input,
+    encoding: 'utf8',
+    timeout: 15000,
+    maxBuffer: 1024 * 1024,
+    stdio: ['pipe', 'pipe', 'pipe'],
+  });
+}
+
+function linuxLoad() {
+  try {
+    return { token: String(runSecretTool(['lookup', ...LINUX_ATTRIBUTES]) || '').trim(), engine: 'linux-secret-service', detail: '' };
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return {
+        token: '',
+        engine: 'memory-only',
+        detail: 'Install secret-tool and enable a desktop keyring to keep the GitHub sign-in after closing the app.',
+      };
+    }
+    if (error.status === 1 && !String(error.stderr || '').trim()) {
+      return { token: '', engine: 'linux-secret-service', detail: '' };
+    }
+    return {
+      token: '',
+      engine: 'linux-secret-service',
+      detail: 'The Linux keyring is unavailable. Sign in again after unlocking your desktop keyring.',
+    };
+  }
+}
 
 function blobPath() {
   return path.join(userDataDir(), FILE_NAME);
@@ -72,6 +104,7 @@ function runPowerShell(script, input) {
  * that this user cannot open, so the caller should ask them to sign in again.
  */
 function load() {
+  if (process.platform === 'linux') return linuxLoad();
   if (process.platform !== 'win32') return { token: '', engine: 'memory-only', detail: '' };
 
   let raw;
@@ -101,6 +134,31 @@ function load() {
 /** Stores the token. An empty value removes it. Says where it ended up. */
 function save(token) {
   const value = String(token || '').trim();
+
+  if (process.platform === 'linux') {
+    try {
+      if (!value) {
+        try {
+          runSecretTool(['clear', ...LINUX_ATTRIBUTES]);
+        } catch (error) {
+          if (error.status !== 1 || String(error.stderr || '').trim()) throw error;
+        }
+        return { stored: false, engine: 'linux-secret-service', path: '', detail: '' };
+      }
+      runSecretTool(['store', '--label=GUITinstal GitHub sign-in', ...LINUX_ATTRIBUTES], `${value}\n`);
+      return { stored: true, engine: 'linux-secret-service', path: '', detail: '' };
+    } catch (error) {
+      const missingTool = error.code === 'ENOENT';
+      return {
+        stored: false,
+        engine: 'memory-only',
+        path: '',
+        detail: missingTool
+          ? 'Install secret-tool and enable a desktop keyring to keep the GitHub sign-in after closing the app. It is only in memory for now.'
+          : 'The Linux keyring could not save this sign-in. It is only in memory for now; unlock the desktop keyring and sign in again to save it.',
+      };
+    }
+  }
 
   if (process.platform !== 'win32') {
     return {
@@ -138,6 +196,9 @@ function save(token) {
 
 /** Lets Settings tell the user how the credential is kept. */
 function describe() {
+  if (process.platform === 'linux') {
+    return { engine: 'linux-secret-service', label: 'Linux desktop keyring (Secret Service)', path: '' };
+  }
   if (process.platform !== 'win32') {
     return { engine: 'memory-only', label: 'held in this session only', path: '' };
   }

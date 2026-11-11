@@ -75,7 +75,7 @@
       </section>
 
       <section class="doc-section section-wrap" id="other-platforms">
-        <div class="download-heading"><span class="section-kicker">MACOS AND LINUX</span><h2>Choose your download.</h2><p>The buttons become active when each installer is published in the latest release.</p></div>
+        <div class="download-heading"><span class="section-kicker">MACOS AND LINUX</span><h2>Choose your download.</h2><p>The macOS installer is not published yet. Linux users can run GUITinstal directly from the public repository below.</p></div>
         <div class="file-cards">
           <article class="file-card">
             <header><span class="file-tag">Universal</span><h3>macOS DMG</h3></header>
@@ -88,14 +88,14 @@
             <a class="button button-light button-full" href="index.html#download" data-file="macos:universal"><svg><use href="#i-download"/></svg> Download for macOS</a>
           </article>
           <article class="file-card">
-            <header><span class="file-tag">x86_64</span><h3>Linux AppImage</h3></header>
-            <p>A portable AppImage for 64-bit Linux. Some distributions require FUSE 2 support to launch AppImages.</p>
+            <header><span class="file-tag">Available now</span><h3>Linux from repository</h3></header>
+            <p>No Linux installer is published yet. The public source can be run on 64-bit Linux with Node.js 24 or newer and Git. No GitHub account or payment is required.</p>
             <dl class="spec">
-              <dt>File</dt><dd><code data-file-field="linux.appimage.name">Not published yet</code></dd>
-              <dt>Size</dt><dd><span data-file-field="linux.appimage.size">Not published yet</span></dd>
-              <dt>SHA-256</dt><dd class="sha"><code data-file-field="linux.appimage.sha">—</code></dd>
+              <dt>Source</dt><dd><code>matheus-uxdd33/guitinstal</code></dd>
+              <dt>Run mode</dt><dd>Local browser window</dd>
+              <dt>Requirements</dt><dd>Node.js 24+ and Git</dd>
             </dl>
-            <a class="button button-light button-full" href="index.html#download" data-file="linux:appimage"><svg><use href="#i-download"/></svg> Download for Linux</a>
+            <a class="button button-light button-full" href="#source"><svg><use href="#i-arrow-right"/></svg> See Linux setup steps</a>
           </article>
         </div>
       </section>
@@ -209,13 +209,14 @@
       </section>
 
       <section class="doc-section section-wrap" id="source">
-        <div class="download-heading"><span class="section-kicker">MACOS · LINUX · NO INSTALLER</span><h2>Run it from source.</h2><p>The app has zero npm dependencies. It requires Node.js 24+ for the built-in SQLite library.</p></div>
+        <div class="download-heading"><span class="section-kicker">LINUX · PUBLIC REPOSITORY · NO INSTALLER</span><h2>Run GUITinstal from source.</h2><p>The repository is public, so you do not need a GitHub account. Install Git and Node.js 24 or newer first.</p></div>
         <div class="code-block" tabindex="0" role="region" aria-label="Commands to run GUITinstal from source">
-          <p>git clone https://github.com/your-name/guitinstal.git
+          <p>git clone https://github.com/matheus-uxdd33/guitinstal.git
 cd guitinstal/app
 node server/main.js --open</p>
-          <p class="code-caption">That starts the local server and opens the interface in its own window using your installed Chrome or Edge. On macOS and Linux the same three lines are the current way to run it; native builds are on the roadmap.</p>
+          <p class="code-caption">This runs GUITinstal locally and opens its interface in your browser. The app source and your projects stay on your computer. A one-file Linux AppImage is not available yet; this repository method is the current Linux option.</p>
         </div>
+        <p class="verify-note"><svg><use href="#i-info"/></svg><span>To install Node.js without guessing commands for your Linux distribution, use the official <a class="inline-link" href="https://nodejs.org/en/download" target="_blank" rel="noreferrer">Node.js download page</a>. Git is available from your distribution's software manager.</span></p>
       </section>
 
       <section class="doc-section section-wrap" id="uninstall">

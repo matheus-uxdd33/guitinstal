@@ -14,6 +14,7 @@
   }
 
   const files = (platform = 'windows') => release?.platforms?.[platform]?.files || [];
+  const downloadFallback = (element) => element.dataset.downloadFallback || guide;
 
   function pick(platform) {
     if (platform === 'auto') platform = currentPlatform();
@@ -53,7 +54,7 @@
         element.setAttribute('download', file.name);
         element.classList.remove('is-pending');
       } else {
-        element.setAttribute('href', guide);
+        element.setAttribute('href', downloadFallback(element));
         element.removeAttribute('download');
         element.classList.add('is-pending');
       }
@@ -88,7 +89,7 @@
     const macFile = pick('macos');
     const linuxFile = pick('linux');
     meta('macCardMeta', macFile?.url ? `Universal DMG · ${macFile.sizeLabel}` : 'Not published yet — see the guide');
-    meta('linuxCardMeta', linuxFile?.url ? `AppImage · ${linuxFile.sizeLabel}` : 'Not published yet — see the guide');
+    meta('linuxCardMeta', linuxFile?.url ? `AppImage · ${linuxFile.sizeLabel}` : 'Run from the public repository · Node.js 24+');
 
     // What's new is written once, in releases.json, and read here — the app
     // shows the same notes from its own changelog entry for the same version.
@@ -117,7 +118,7 @@
   document.querySelectorAll('[data-download]').forEach((button) => {
     button.addEventListener('click', (event) => {
       const file = pick(button.dataset.download || 'auto');
-      if (file?.url || button.getAttribute('href') === guide) return;
+      if (file?.url || button.getAttribute('href') === downloadFallback(button)) return;
       event.preventDefault();
       notice('Download not published yet', 'This installer is not in the latest public release yet. Open the install guide for details.');
     });
@@ -137,9 +138,9 @@
       return response.json();
     }).then((data) => {
       const platforms = {
-        windows: { ...fallback.platforms?.windows, files: [] },
-        macos: { ...fallback.platforms?.macos, files: [] },
-        linux: { ...fallback.platforms?.linux, files: [] },
+        windows: { ...fallback.platforms?.windows, files: (fallback.platforms?.windows?.files || []).filter((file) => file.source === 'direct') },
+        macos: { ...fallback.platforms?.macos, files: (fallback.platforms?.macos?.files || []).filter((file) => file.source === 'direct') },
+        linux: { ...fallback.platforms?.linux, files: (fallback.platforms?.linux?.files || []).filter((file) => file.source === 'direct') },
       };
       for (const asset of data.assets || []) {
         let platform;
@@ -149,6 +150,7 @@
         else if (/^GUITinstal-.*-mac-universal\.dmg$/i.test(asset.name)) [platform, kind] = ['macos', 'universal'];
         else if (/^GUITinstal-.*-linux-x64\.AppImage$/i.test(asset.name)) [platform, kind] = ['linux', 'appimage'];
         else continue;
+        if (platforms[platform].files.some((file) => file.source === 'direct')) continue;
         platforms[platform].files.push({
           kind,
           name: asset.name,

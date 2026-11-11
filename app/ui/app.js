@@ -544,7 +544,7 @@
         <div class="card-path">${esc(item.dir)}</div>
         <div class="card-actions">
           <button class="button button-primary" data-action="import-repo" data-dir="${esc(item.dir)}">
-            <svg aria-hidden="true"><use href="#i-plus"/></svg> Add to My projects
+            <svg aria-hidden="true"><use href="#i-plus"/></svg> Add to My library
           </button>
           <button class="button button-ghost" data-action="open-workspace-repo" data-dir="${esc(item.dir)}">
             <svg aria-hidden="true"><use href="#i-folder"/></svg> Folder
@@ -568,7 +568,7 @@
       const total = state.workspaceRepos.length;
       pathLabel.textContent = total
         ? `${total} Git repositor${total === 1 ? 'y' : 'ies'} in ${data.workspace}. ${
-            found.length ? `${found.length} can be added to My projects.` : 'All of them are already in My projects.'
+            found.length ? `${found.length} can be added to My library.` : 'All of them are already in My library.'
           }`
         : `No Git repositories found in ${data.workspace} yet. Paste a GitHub link on Home to download the first one.`;
 
@@ -580,7 +580,7 @@
       }
 
       block.hidden = false;
-      $('#workspaceGalleryCount').textContent = `${found.length} not in My projects`;
+      $('#workspaceGalleryCount').textContent = `${found.length} not in My library`;
       grid.innerHTML = found.map(workspaceRepoCard).join('');
     } catch (error) {
       pathLabel.textContent = `Could not scan the workspace: ${error.message}`;
@@ -707,7 +707,7 @@
   async function importWorkspaceRepo(directory) {
     try {
       const result = await api('/api/workspace/repos', { method: 'POST', body: { directory } });
-      toast('Added to My projects', `${result.project.fullName} is now in your library.`, 'success');
+      toast('Added to your library', `${result.project.fullName} is now in your library.`, 'success');
       await loadState();
     } catch (error) {
       toast('Could not add repository', error.message, 'error');
@@ -933,7 +933,7 @@
       toast('Analysis failed', error.message, 'error');
     } finally {
       button.disabled = false;
-      button.querySelector('.btn-label').textContent = 'Analyze';
+      button.querySelector('.btn-label').textContent = 'Prepare project';
     }
   }
 
@@ -1047,11 +1047,11 @@
     } else if (snapshot.status === 'done') {
       if (snapshot.library && snapshot.library.ok === false) {
         title = 'Files installed; the library entry failed.';
-        detail = `GUITinstal could not save this project to My projects: ${snapshot.library.error || 'unknown error'}. The folder is still on disk at ${snapshot.directory}.`;
+        detail = `GUITinstal could not save this project to your library: ${snapshot.library.error || 'unknown error'}. The folder is still on disk at ${snapshot.directory}.`;
       } else {
         title = snapshot.verification?.ok ? 'Installed and saved.' : 'Commands finished; checking the result.';
         detail = snapshot.verification?.ok
-          ? `${fileCount(snapshot.verification.files)} are on disk. Find this project in My projects.`
+          ? `${fileCount(snapshot.verification.files)} are on disk. Find this project in your library.`
           : 'GUITinstal is checking the project folder before calling this install verified.';
       }
     } else if (snapshot.status === 'failed') {
@@ -1161,11 +1161,11 @@
             (item) => (directory && item.dir === directory) || (snapshot.library.id && item.id === snapshot.library.id)
           );
           if (landed) {
-            toast('Added to My projects', 'The first library write was busy, the retry saved it.', 'success');
+            toast('Added to your library', 'The first library write was busy, the retry saved it.', 'success');
             return;
           }
           toast(
-            'Not added to My projects',
+            'Not added to your library',
             `The files are on disk, but the library entry failed: ${snapshot.library.error || 'unknown error'}.`,
             'error'
           );
@@ -1841,8 +1841,8 @@
       toast(
         'Workspace scanned',
         pending
-          ? `${pending} downloaded repositor${pending === 1 ? 'y' : 'ies'} can be added to My projects.`
-          : 'Every repository on disk is already in My projects.',
+          ? `${pending} downloaded repositor${pending === 1 ? 'y' : 'ies'} can be added to your library.`
+          : 'Every repository on disk is already in your library.',
         pending ? 'info' : 'success'
       );
     } finally {

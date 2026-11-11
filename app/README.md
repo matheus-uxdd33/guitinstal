@@ -69,14 +69,16 @@ O núcleo (`core/`) não sabe nada sobre HTTP nem sobre o navegador: é por isso
 
 ## Configurações
 
-Em *Configurações*: pasta de trabalho, token pessoal do GitHub (opcional — sobe o limite da API de 60 para 5000 requisições/hora), clone raso, aprovação automática de passos de baixo risco e tema.
+Em *Configurações*: pasta de trabalho, conexão opcional com GitHub (aumenta o limite da API de 60 para 5000 requisições/hora), clone raso, aprovação automática de passos de baixo risco e tema. A conexão usa o Device Flow oficial e solicita somente acesso público; não concede acesso a repositórios privados.
 
 Em uma instalação nova, a pasta de trabalho padrão é `Desktop\Repositories` (ou `~/GUITinstal-workspace` quando não existe pasta Desktop). A galeria sempre varre a raiz configurada e, se existir, a pasta legada `.guitinstal-workspace` dentro dela: assim os clones feitos por versões antigas continuam visíveis mesmo depois de mudar a pasta de trabalho.
 
-Dados locais em `%APPDATA%\GUITinstal`:
-- `config.json` — preferências (inclui o token, em texto simples, só na sua máquina)
+Dados locais em `%APPDATA%\GUITinstal` no Windows (em macOS/Linux, sob a pasta de dados do usuário):
+- `config.json` — preferências; não contém o token do GitHub
 - `library.sqlite` — biblioteca de projetos; o `projects.json` antigo é importado e preservado como backup
 - `runtime.json` — porta e token da execução atual
+
+O token fica no DPAPI do Windows ou no keyring Secret Service do Linux (`secret-tool`) quando disponível. No macOS e em Linux sem keyring configurado, ele fica somente na memória durante a sessão. O app informa esse estado em Configurações e nunca grava o token em texto simples.
 
 ## Verificação
 
@@ -116,5 +118,5 @@ Esse comando é o fluxo local de auditoria legado, focado no build Windows. Para
 
 - O plano assume um projeto por vez; não há fila de instalações.
 - `docker compose up` usa a CLI do Docker: em máquinas só com Docker Desktop, o `docker` pode não estar no PATH do processo.
-- O token do GitHub fica no armazenamento protegido do Windows (DPAPI), nunca no `config.json`; ainda assim, prefira um token restrito.
+- O token do GitHub usa DPAPI no Windows e Secret Service no Linux quando disponível; no macOS fica apenas na memória. Nunca é gravado em texto simples ou em `config.json`.
 - A versão web não substitui o empacotamento nativo: é a mesma interface servida por `localhost`.
