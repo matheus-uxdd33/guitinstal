@@ -78,20 +78,26 @@ function projectId(owner, repo) {
   return `proj-${owner}-${repo}`.toLowerCase().replace(/[^a-z0-9-]/g, '-');
 }
 
-function openFolder(dir) {
+async function openFolder(dir) {
   if (!fs.existsSync(dir)) return false;
   let cmd = 'xdg-open';
   let args = [dir];
   if (process.platform === 'win32') {
-    cmd = 'explorer.exe';
+    cmd = path.join(process.env.WINDIR || 'C:\\Windows', 'explorer.exe');
     args = [dir];
   } else if (process.platform === 'darwin') {
     cmd = 'open';
     args = [dir];
   }
   try {
-    spawn(cmd, args, { detached: true, stdio: 'ignore', windowsHide: true }).unref();
-    return true;
+    const child = spawn(cmd, args, { detached: true, stdio: 'ignore', windowsHide: true });
+    return await new Promise((resolve) => {
+      child.once('error', () => resolve(false));
+      child.once('spawn', () => {
+        child.unref();
+        resolve(true);
+      });
+    });
   } catch {
     return false;
   }
@@ -102,11 +108,16 @@ function openFolder(dir) {
  * as the child's working directory, never as part of a command line, so a
  * folder name cannot inject anything into the shell.
  */
-function openTerminal(dir) {
+async function openTerminal(dir) {
   if (!fs.existsSync(dir)) return false;
   const targets =
     process.platform === 'win32'
-      ? [{ cmd: 'cmd.exe', args: ['/K'] }]
+      ? [
+          {
+            cmd: process.env.ComSpec || path.join(process.env.WINDIR || 'C:\\Windows', 'System32', 'cmd.exe'),
+            args: ['/K'],
+          },
+        ]
       : process.platform === 'darwin'
         ? [{ cmd: 'open', args: ['-a', 'Terminal', dir] }]
         : [
@@ -122,8 +133,14 @@ function openTerminal(dir) {
         stdio: 'ignore',
         windowsHide: false,
       });
-      child.unref();
-      return true;
+      const started = await new Promise((resolve) => {
+        child.once('error', () => resolve(false));
+        child.once('spawn', () => {
+          child.unref();
+          resolve(true);
+        });
+      });
+      if (started) return true;
     } catch {
       /* try the next terminal */
     }
@@ -791,7 +808,7 @@ const routes = [
       if (!fs.existsSync(settings.workspace)) {
         fs.mkdirSync(settings.workspace, { recursive: true });
       }
-      return { ok: openFolder(settings.workspace) };
+      return { ok: await openFolder(settings.workspace) };
     },
   },
   {
@@ -816,7 +833,7 @@ const routes = [
       const settings = getSettings();
       const dir = path.resolve(String(body.directory || ''));
       if (!insideDir(settings.workspace, dir)) throw new Error('That folder is outside the workspace.');
-      return { ok: openFolder(dir) };
+      return { ok: await openFolder(dir) };
     },
   },
   {
@@ -1282,7 +1299,7 @@ const routes = [
     path: /^\/api\/projects\/([\w-]+)\/terminal$/,
     handler: async (req, params) => {
       const project = findProject(params[0]);
-      return { ok: openTerminal(project.dir), dir: project.dir };
+      return { ok: await openTerminal(project.dir), dir: project.dir };
     },
   },
   {
@@ -1290,7 +1307,7 @@ const routes = [
     path: /^\/api\/projects\/([\w-]+)\/open$/,
     handler: async (req, params) => {
       const project = findProject(params[0]);
-      const ok = openFolder(project.dir);
+      const ok = await openFolder(project.dir);
       return { ok };
     },
   },
